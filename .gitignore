@@ -11,7 +11,7 @@ temp
 
 # Electron / electron-vite
 release
-build
+# build/ 目录里是打包配置 + 图标，需要随仓库上传（不放 .gitignore）
 *.exe
 *.dmg
 *.deb

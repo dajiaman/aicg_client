@@ -1,0 +1,96 @@
+{
+  "template_id": "t2",
+  "name": "高级橙白 T2",
+  "version": "1.0",
+  "description": "动态分句显示字幕，关键词高亮，无自动匹配BGM",
+  "preview_video_url": "https://static-1251729840.cos.ap-guangzhou.myqcloud.com/ai/preview/t2.mp4",
+  "cover_image_url": "https://static-1251729840.cos.ap-guangzhou.myqcloud.com/ai/preview/t2.jpg",
+  "auto_bgm": false,
+  "project_settings": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "duration": 30,
+    "background": "#000000",
+    "bgm_category": ""
+  },
+  "global_elements": {
+    "h1": {
+      "content": "{{h1_content}}",
+      "style": {
+        "fontSize": 125,
+        "fontFamily": "方正粗黑宋简体",
+        "color": "#EA8435",
+        "position": [
+          540,
+          100
+        ],
+        "bold": true,
+        "stroke": {
+          "color": "#000000",
+          "width": 3
+        }
+      },
+      "animation": "{{h1_animation}}",
+      "animation_options": [],
+      "animation_duration": 0.8,
+      "duration": "all"
+    },
+    "h2": {
+      "content": "{{h2_content}}",
+      "style": {
+        "fontSize": 120,
+        "fontFamily": "方正粗黑宋简体",
+        "color": "#FFFFFF",
+        "position": [
+          540,
+          240
+        ],
+        "stroke": {
+          "color": "#000000",
+          "width": 3
+        }
+      },
+      "animation": "{{h2_animation}}",
+      "animation_options": [],
+      "animation_duration": 0.6,
+      "duration": "all"
+    }
+  },
+  "subtitle_config": {
+    "position": [
+      540,
+      1500
+    ],
+    "style": {
+      "fontSize": 95,
+      "fontFamily": "思源宋体",
+      "color": "#FFFFFF",
+      "shadow": {
+        "color": "#000000",
+        "distance": 3,
+        "opacity": 0.7
+      }
+    },
+    "animation_options": [
+      "fade_in",
+      "bounce_in",
+      "vertical_fade_multi",
+      "horizontal_slide_multi"
+    ],
+    "highlight_style": {
+      "color": "#FFD700",
+      "bold": true,
+      "fontSize": 100
+    }
+  },
+  "pip_config": {
+    "position": "center",
+    "scale": 1
+  },
+  "content_prompts": {
+    "h1": "请生成一个吸引人的主标题,8个字以内,且不要有标点，如：世界上最好的养生",
+    "h2": "生成一个简洁的副标题，且不要有标点，6个字以内，如：是情绪稳定 ",
+    "subtitles": "按照以下要求处理字幕信息：注意：断句的组合字幕必须用组合动画vertical_fade_multi、horizontal_slide_multi二选一。"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  appId: 'com.aigc.client',
+  productName: '轻语IP',
+  directories: { buildResources: 'build' },
+  asar: false,
+  files: [
+    '!**/.vscode/*',
+    '!src/*',
+    '!electron.vite.config.{js,ts,mjs,cjs}',
+    '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}',
+    '!{.env,.env.*, .npmrc, pnpm-lock.yaml}',
+    '!{tsconfig.json, tsconfig.node.json, tsconfig.web.json}',
+    '!python-modules/**',
+    '!resources/**'
+  ],
+  asarUnpack: ['logo/**/*'],
+  extraResources: [
+    { from: 'resources/fonts', to: 'fonts', filter: ['**/*'] },
+    { from: 'resources/assets', to: 'assets', filter: ['**/*'] },
+    { from: 'resources/bgm', to: 'bgm', filter: ['**/*'] },
+    { from: 'resources/ffmpeg', to: 'ffmpeg', filter: ['**/*'] },
+    { from: 'resources/mask', to: 'mask', filter: ['**/*'] },
+    { from: 'resources/playwright', to: 'playwright', filter: ['**/*'] },
+    { from: 'resources/soundEffects', to: 'soundEffects', filter: ['**/*'] },
+    { from: 'resources/templates', to: 'templates', filter: ['**/*'] },
+    { from: 'resources/chromadb', to: 'chromadb', filter: ['**/*'] }
+  ],
+  nsis: {
+    artifactName: '${name}-${version}-setup.${ext}',
+    shortcutName: '${productName}',
+    uninstallDisplayName: '${productName}',
+    createDesktopShortcut: 'always'
+  },
+  win: {
+    target: [{ target: 'nsis', arch: ['x64'] }]
+  },
+  portable: { artifactName: '${productName}-${version}-${arch}.${ext}' },
+  mac: {
+    target: [
+      { target: 'dmg', arch: ['x64', 'arm64', 'universal'] },
+      { target: 'zip', arch: ['x64', 'arm64', 'universal'] }
+    ],
+    entitlementsInherit: 'build/entitlements.mac.plist',
+    extendInfo: {
+      NSCameraUsageDescription: "Application requests access to the device's camera.",
+      NSMicrophoneUsageDescription: "Application requests access to the device's microphone.",
+      NSDocumentsFolderUsageDescription: "Application requests access to the user's Documents folder.",
+      NSDownloadsFolderUsageDescription: "Application requests access to the user's Downloads folder."
+    },
+    notarize: false
+  },
+  dmg: {
+    artifactName: '${name}-${version}-${arch}.${ext}',
+    window: { width: 540, height: 380 },
+    contents: [
+      { x: 410, y: 230, type: 'link', path: '/Applications' },
+      { x: 130, y: 230, type: 'file' }
+    ]
+  },
+  linux: {
+    target: [
+      { target: 'deb', arch: ['x64', 'arm64', 'armv7l'] },
+      { target: 'AppImage', arch: ['x64', 'arm64', 'armv7l'] },
+      { target: 'rpm', arch: ['x64'] }
+    ],
+    maintainer: 'electronjs.org',
+    category: 'Utility'
+  },
+  npmRebuild: false,
+  publish: [{ provider: 'generic', url: 'https://example.com/auto-updates' }],
+  electronDownload: { mirror: 'https://npmmirror.com/mirrors/electron/' }
+}

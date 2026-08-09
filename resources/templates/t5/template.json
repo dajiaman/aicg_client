@@ -1,0 +1,92 @@
+{
+  "template_id": "t5",
+  "name": "高级情感 T5",
+  "version": "1.0",
+  "description": "自动BGM和声音特效，自动画面动画,关键词高亮",
+  "preview_video_url": "https://static-1251729840.cos.ap-guangzhou.myqcloud.com/ai/preview/t5.mp4",
+  "cover_image_url":"https://static-1251729840.cos.ap-guangzhou.myqcloud.com/ai/preview/t5.jpg",
+  "auto_bgm": true,
+  "project_settings": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "duration": 30,
+    "background": "#000000",
+    "bgm_category":"情感"
+  },
+  
+  "global_elements": {
+    "h1": {
+      "content": "{{h1_content}}",
+      "style": {
+        "fontSize": 125,
+        "fontFamily": "东方大楷",
+        "color": "#FFF58F",
+        "position": [540, 100],
+        "bold": true,
+        "shadow": {
+          "color": "#000000",
+          "distance": 4,
+          "opacity":0.8
+        }
+      },
+      "animation": "{{h1_animation}}",
+      "animation_options": [],
+      "animation_duration": 0.8,
+      "duration": 5
+    },
+    "h2": {
+      "content": "{{h2_content}}",
+      "style": {
+        "fontSize": 120,
+        "fontFamily": "东方大楷",
+        "color": "#FFFFFF",
+        "position": [540, 220],
+        "shadow": {
+          "color": "#000000",
+          "distance": 4,
+          "opacity":0.8
+        }
+      },
+      "animation": "{{h2_animation}}",
+      "animation_options": [],
+      "animation_duration": 0.6,
+      "duration": 5  
+    }
+  },
+  
+  "subtitle_config": {
+    "position": [540, 1500],
+    "style": {
+      "fontSize": 95,
+      "fontFamily": "月星楷",
+      "color": "#FFFFFF",
+      "shadow": {
+          "color": "#000000",
+          "distance": 2,
+          "opacity":0.7
+        }
+    },
+    "animation_options": ["fade_in", "typewriter_char"],
+    "highlight_style": {
+      "color": "#A20327",
+      "bold": true,
+      "fontSize":90
+    }
+  },
+
+  "keyframe":{
+    "animation_options":["边框1","聚焦头部"]
+  }
+  ,
+  "pip_config": {
+    "position": "center",
+    "scale": 1
+  },
+  
+  "content_prompts": {
+    "h1": "请生成一个吸引人的主标题,8个字以内,且不要有标点，如：最好的养生",
+    "h2": "生成一个简洁的副标题，且不要有标点，6个字以内，如：是情绪稳定 ",
+    "subtitles": "按照以下要求处理字幕信息,typewriter_char打字机动画效果和fade_in动画效果各占一半，注意：避免在开头6秒前出现聚焦头部动画"
+  }
+}

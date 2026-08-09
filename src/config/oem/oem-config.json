@@ -1,0 +1,42 @@
+{
+  "default": {
+    "id": "default",
+    "name": "轻语IP智能体",
+    "shortName": "轻语IP",
+    "themeId": "default",
+    "logoPath": "logo.png",
+    "logoUrl": "https://static-1251729840.cos.ap-guangzhou.myqcloud.com/ai/assets/logo_icon.png",
+    "iconIcoPath": "resources/assets/logo_icon.ico",
+    "iconIcnsPath": "resources/assets/logo_icon.icns"
+  },
+  "zy": {
+    "id": "zy",
+    "name": "正赢AI智链研究院",
+    "shortName": "正赢AI智链研究院",
+    "themeId": "default",
+    "logoPath": "logo_zy.png",
+    "logoUrl": "https://static-1251729840.cos.ap-guangzhou.myqcloud.com/ai/assets/logo_zy.png",
+    "iconIcoPath": "resources/assets/logo_zy.ico",
+    "iconIcnsPath": "resources/assets/logo_zy.icns"
+  },
+  "yw": {
+    "id": "zy",
+    "name": "鹦鹉IP智能体",
+    "shortName": "鹦鹉IP智能体",
+    "themeId": "orange",
+    "logoPath": "logo_yw.png",
+    "logoUrl": "https://static-1251729840.cos.ap-guangzhou.myqcloud.com/ai/assets/logo_yw.png",
+    "iconIcoPath": "resources/assets/logo_yw.ico",
+    "iconIcnsPath": "resources/assets/logo_yw.icns"
+  },
+  "fh": {
+    "id": "fh",
+    "name": "风火IP口播智能体",
+    "shortName": "风火IP口播智能体",
+    "themeId": "ocean",
+    "logoPath": "logo_fh.png",
+    "logoUrl": "https://static-1251729840.cos.ap-guangzhou.myqcloud.com/ai/assets/logo_fh.png",
+    "iconIcoPath": "resources/assets/logo_fh.ico",
+    "iconIcnsPath": "resources/assets/logo_fh.icns"
+  }
+}

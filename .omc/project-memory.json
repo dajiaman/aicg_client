@@ -1,0 +1,159 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1785549743631,
+  "projectRoot": "D:\\code_project\\aigc-client",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "playwright",
+        "version": "1.61.1",
+        "category": "testing"
+      },
+      {
+        "name": "vite",
+        "version": "7.2.6",
+        "category": "build"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.25",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "npm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "npm run build",
+    "testCommand": null,
+    "lintCommand": "npm run lint",
+    "devCommand": "npm run dev",
+    "scripts": {
+      "format": "prettier --write .",
+      "lint": "eslint --cache .",
+      "start": "electron-vite preview",
+      "dev": "electron-vite dev --watch",
+      "build": "electron-vite build",
+      "justpack": "electron-builder --dir",
+      "postinstall": "electron-builder install-app-deps",
+      "build:unpack": "npm run build && electron-builder --dir",
+      "build:win": "npm run build && electron-builder --win",
+      "build:mac": "npm run build && electron-builder --mac",
+      "build:linux": "npm run build && electron-builder --linux"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "src"
+    ],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "build": {
+      "path": "build",
+      "purpose": "Build output",
+      "fileCount": 3,
+      "lastAccessed": 1785549743503,
+      "keyFiles": [
+        "entitlements.mac.plist",
+        "icon.icns",
+        "icon.ico"
+      ]
+    },
+    "dist": {
+      "path": "dist",
+      "purpose": "Distribution/build output",
+      "fileCount": 10,
+      "lastAccessed": 1785549743504,
+      "keyFiles": [
+        "aigc-client-1.0.0-ia32-win.zip",
+        "aigc-client-1.0.0-ia32.exe",
+        "aigc-client-1.0.0-setup.exe",
+        "aigc-client-1.0.0-setup.exe.blockmap",
+        "aigc-client-1.0.0-win.zip"
+      ]
+    },
+    "logo": {
+      "path": "logo",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1785549743573,
+      "keyFiles": [
+        "icon.png"
+      ]
+    },
+    "out": {
+      "path": "out",
+      "purpose": "Build output",
+      "fileCount": 0,
+      "lastAccessed": 1785549743574,
+      "keyFiles": []
+    },
+    "outputs": {
+      "path": "outputs",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1785549743574,
+      "keyFiles": []
+    },
+    "python-modules": {
+      "path": "python-modules",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1785549743575,
+      "keyFiles": []
+    },
+    "resources": {
+      "path": "resources",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1785549743575,
+      "keyFiles": []
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1785549743575,
+      "keyFiles": []
+    },
+    "temp": {
+      "path": "temp",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1785549743576,
+      "keyFiles": []
+    },
+    "resources\\assets": {
+      "path": "resources\\assets",
+      "purpose": "Static assets",
+      "fileCount": 2,
+      "lastAccessed": 1785549743579,
+      "keyFiles": [
+        "black_bg.png",
+        "f_bg.png"
+      ]
+    }
+  },
+  "hotPaths": [],
+  "userDirectives": []
+}

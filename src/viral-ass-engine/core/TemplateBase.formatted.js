@@ -1,0 +1,91 @@
+function _0x21a6(_0x17662e, _0x7aa4d3) {
+    _0x17662e = _0x17662e - 0x173;
+    const _0x3afb3a = _0x3afb();
+    let _0x21a627 = _0x3afb3a[_0x17662e];
+    return _0x21a627;
+}
+const _0x4eda7a = _0x21a6;
+(function(_0x30c576, _0x130df4) {
+    const _0x33eb5c = _0x21a6,
+        _0x4d0189 = _0x30c576();
+    while (!![]) {
+        try {
+            const _0x5a6fbf = parseInt(_0x33eb5c(0x17d)) / 0x1 * (-parseInt(_0x33eb5c(0x17a)) / 0x2) + -parseInt(_0x33eb5c(0x181)) / 0x3 * (parseInt(_0x33eb5c(0x18e)) / 0x4) + parseInt(_0x33eb5c(0x179)) / 0x5 + parseInt(_0x33eb5c(0x18d)) / 0x6 + -parseInt(_0x33eb5c(0x188)) / 0x7 * (parseInt(_0x33eb5c(0x17c)) / 0x8) + -parseInt(_0x33eb5c(0x178)) / 0x9 + -parseInt(_0x33eb5c(0x182)) / 0xa * (-parseInt(_0x33eb5c(0x18a)) / 0xb);
+            if (_0x5a6fbf === _0x130df4) break;
+            else _0x4d0189['push'](_0x4d0189['shift']());
+        } catch (_0x1a4400) {
+            _0x4d0189['push'](_0x4d0189['shift']());
+        }
+    }
+}(_0x3afb, 0x33816));
+
+function _0x3afb() {
+    const _0x5c8e4b = ['198hRaGcP', 'isArray', 'width', '1054008RXDaKb', '4ETvTPt', 'scaleValue', 'validate', 'scalePosition', ']\x20警告:\x20第\x20', 'height', 'getResolution', '2361942cPRUcu', '1371690WTKtaR', '170qjoUlR', 'run', '40QJgAkK', '4163EppSFn', 'exports', 'warn', '\x20行字幕内容为空', '632199LKLiwe', '375070ynYkIl', 'render', '[Template:', 'round', '子类必须实现\x20render\x20方法', 'resolution', '121996uuWiDG', 'after'];
+    _0x3afb = function() {
+        return _0x5c8e4b;
+    };
+    return _0x3afb();
+}
+class TemplateBase {
+    constructor(_0x1e5411) {
+        this['id'] = _0x1e5411;
+    } [_0x4eda7a(0x177)](_0x4bd079) {
+        const _0x4818c7 = _0x4eda7a,
+            _0x4f0904 = _0x4bd079[_0x4818c7(0x187)]?.[_0x4818c7(0x18c)] || 0x780,
+            _0x2e9340 = _0x4bd079[_0x4818c7(0x187)]?.[_0x4818c7(0x176)] || 0x438,
+            _0x5e1896 = _0x4f0904 / 0x2,
+            _0x3666e1 = _0x2e9340 / 0x2,
+            _0x871b06 = _0x2e9340 > _0x4f0904;
+        return {
+            'width': _0x4f0904,
+            'height': _0x2e9340,
+            'centerX': _0x5e1896,
+            'centerY': _0x3666e1,
+            'isPortrait': _0x871b06
+        };
+    } [_0x4eda7a(0x18f)](_0x1d995c, _0x380c68, _0x1c71b8 = 'x') {
+        const _0x58c812 = _0x4eda7a,
+            {
+                width: _0x330cd9,
+                height: _0x54e65b
+            } = this[_0x58c812(0x177)](_0x380c68),
+            _0xbbfb9a = 0x780,
+            _0x25d922 = 0x438;
+        return _0x1c71b8 === 'y' ? Math[_0x58c812(0x185)](_0x1d995c * _0x54e65b / _0x25d922) : Math['round'](_0x1d995c * _0x330cd9 / _0xbbfb9a);
+    } [_0x4eda7a(0x174)](_0x82b19c, _0x1d03cc, _0x2407ce) {
+        const _0x11695f = _0x4eda7a;
+        return {
+            'x': this[_0x11695f(0x18f)](_0x82b19c, _0x2407ce, 'x'),
+            'y': this[_0x11695f(0x18f)](_0x1d03cc, _0x2407ce, 'y')
+        };
+    }
+    async ['before'](_0x57fb8a) {
+        return _0x57fb8a;
+    }
+    async [_0x4eda7a(0x173)](_0x4ed5c8) {
+        const _0x1a760a = _0x4eda7a,
+            {
+                subtitles: _0x5b41fb
+            } = _0x4ed5c8;
+        if (!_0x5b41fb || !Array[_0x1a760a(0x18b)](_0x5b41fb)) throw new Error('字幕数据必须是数组');
+        return _0x5b41fb['forEach']((_0x335ff1, _0x2d994b) => {
+            const _0x1fd7e5 = _0x1a760a;
+            !_0x335ff1['text'] && console[_0x1fd7e5(0x17f)](_0x1fd7e5(0x184) + this['id'] + _0x1fd7e5(0x175) + (_0x2d994b + 0x1) + _0x1fd7e5(0x180));
+        }), !![];
+    }
+    async ['render'](_0x5d6981, _0x5b27a5) {
+        const _0x9db0ac = _0x4eda7a;
+        throw new Error(_0x9db0ac(0x186));
+    }
+    async [_0x4eda7a(0x189)](_0xc43463, _0x163ee0) {
+        return _0x163ee0;
+    }
+    async [_0x4eda7a(0x17b)](_0x420960, _0x166ed9) {
+        const _0x4374fe = _0x4eda7a,
+            _0x1471ec = await this['before'](_0x420960);
+        await this[_0x4374fe(0x173)](_0x1471ec), await this[_0x4374fe(0x183)](_0x1471ec, _0x166ed9);
+        let _0x5d0812 = _0x166ed9['getContent']();
+        return _0x5d0812 = await this['after'](_0x1471ec, _0x5d0812), _0x5d0812;
+    }
+}
+module[_0x4eda7a(0x17e)] = TemplateBase;

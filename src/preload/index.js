@@ -1051,33 +1051,6 @@ const api = {
      */
     login: (email, password) => {
       console.log(`user login`, email, password)
-      return Promise.resolve({
-        success: true,
-        data: {
-          signInfo: {
-            expiresAt: '2026-08-04T20:11:05.281Z',
-            keyId: 'f211de2465a8a04851431fc9',
-            secret: '6d9677a4b2e50d276a504e915f106d60beea33998037a04a37b307d950690d6f',
-            version: 'v2'
-          },
-          token:
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIwOTcyLCJlbWFpbCI6ImRhamlhbWFuQGxpdmUuY29tIiwidG9rZW5WZXJzaW9uIjo3MiwiaWF0IjoxNzg1MjY5NDY1LCJleHAiOjE3ODU4NzQyNjV9.XL_qRebziBWqFhWgZigcgV-vscyg8K_wsxgmvWvSRzY',
-
-          user: {
-            api_expires_at: '2026-07-15T13:12:19.000Z',
-            created_at: '2026-07-15T13:12:19.000Z',
-            email: 'dajiaman@live.com',
-            id: 20972,
-            is_active: 1,
-            is_vip: 1,
-            points: 0,
-            token_version: 71,
-            updated_at: '2026-07-28T20:01:19.000Z',
-            username: 'dajiaman',
-            vip_expires_at: '2026-07-18T13:12:19.000Z'
-          }
-        }
-      })
       return ipcRenderer.invoke('user:login', { email, password })
     },
 
@@ -1086,25 +1059,8 @@ const api = {
      */
     getProfile: () => {
       console.log(`user getProfile`)
-      return Promise.resolve({
-        success: true,
-        data: {
-          api_expires_at: '2026-07-15T13:12:19.000Z',
-          created_at: '2026-07-15T13:12:19.000Z',
-          email: 'dajiaman@live.com',
-          id: 20972,
-          is_active: 1,
-          is_vip: 1,
-          points: 0,
-          token_version: 71,
-          updated_at: '2026-07-28T20:01:19.000Z',
-          username: 'dajiaman',
-          vip_expires_at: '2026-07-18T13:12:19.000Z'
-        }
-      })
       return ipcRenderer.invoke('user:profile')
     },
-
     /**
      * 更新用户资料
      */
@@ -1163,9 +1119,9 @@ const api = {
     /**
      * 重置密码
      */
-    resetPassword: (email, oldPassword, newPassword) => {
-      console.log(`user resetPassword`, email, oldPassword, newPassword)
-      return ipcRenderer.invoke('user:reset-password', { email, oldPassword, newPassword })
+    resetPassword: (email, code, newPassword) => {
+      console.log(`user resetPassword`, email, code, newPassword)
+      return ipcRenderer.invoke('user:reset-password', { email, code, newPassword })
     }
   },
 

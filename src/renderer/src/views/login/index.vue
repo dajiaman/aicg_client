@@ -6,10 +6,7 @@
       <!-- 顶部品牌区 -->
       <div class="login-header">
         <div class="app-icon">
-          <img
-            :src="appStore.oemInfo.logoUrl"
-            class="logo-image"
-          />
+          <img :src="appStore.oemInfo.logoUrl" class="logo-image" />
         </div>
         <div class="app-text">
           <div class="app-title">{{ appStore.oemInfo.name }}</div>
@@ -19,6 +16,8 @@
 
       <!-- 表单卡片 -->
       <div class="login-box">
+
+        <!-- 登录表单 -->
         <div v-if="mode === 'login'" class="login-form">
           <h2 class="form-title">账号登录</h2>
           <!-- 登录账号表单 -->
@@ -84,7 +83,8 @@
           </div>
         </div>
 
-        <div v-if="mode === 'register'" class="login-form">
+        <!-- 注册表单 -->
+        <div v-if="mode === 'register'" class="login-form register-form">
           <h2 class="form-title">账号注册</h2>
 
           <!-- 注册账号表单 -->
@@ -166,6 +166,7 @@
           </div>
         </div>
 
+        <!-- 重置密码表单 -->
         <div v-if="mode === 'resetPassword'" class="login-form">
           <h2 class="form-title">重置密码</h2>
 
@@ -205,7 +206,9 @@
                   </template>
                 </a-input>
 
-                <a-button size="large">获取验证码</a-button>
+                <a-button size="large" @click="handleSendResetCode" :disabled="resetCodeSending">
+                  {{ resetCodeSending ? `${remaining}s` : '获取验证码' }}
+                </a-button>
               </div>
             </a-form-item>
 
@@ -253,17 +256,43 @@
         </div>
       </div>
     </div>
+
+    <a-modal
+      v-model:open="vipModalOpen"
+      title="激活会员"
+      @ok="handleVipActivate"
+      ok-text="激活"
+      @cancel="handleVipActivateCancel"
+    >
+      <a-alert
+        message="提示"
+        description="请输入激活码激活会员以使用完整功能"
+        type="info"
+        show-icon
+        style="margin-bottom: 20px"
+      ></a-alert>
+      <a-form layout="vertical">
+        <a-form-item label="激活码" required>
+          <a-input v-model:value="vipForm.code" size="large" placeholder="请输入激活码" allow-clear>
+            <template #prefix>
+              <LockOutlined />
+            </template>
+          </a-input>
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons-vue'
 import LoginTitleBar from '../../components/LoginTitleBar.vue'
 import { useAuthStore } from '../../store/auth'
 import { useAppStore } from '../../store/app'
+import { useCountdown } from '@vueuse/core'
 
 defineOptions({ name: 'LoginView' })
 
@@ -276,12 +305,18 @@ const loginFormRef = ref(null)
 const registerFormRef = ref(null)
 const resetPasswordFormRef = ref(null)
 
+const vipModalOpen = ref(false)
+
 const mode = ref('login')
 
 const loginForm = reactive({
   email: '',
   password: '',
   autoLogin: false
+})
+
+const vipForm = reactive({
+  code: ''
 })
 
 const registerForm = reactive({
@@ -291,6 +326,7 @@ const registerForm = reactive({
   confirmPassword: ''
 })
 
+// 重置密码表单
 const resetPasswordForm = reactive({
   email: '',
   code: '',
@@ -378,6 +414,7 @@ onMounted(() => {
     }
   }
 
+  // 最后一次使用的邮箱
   const lastLoginEmail = localStorage.getItem('lastLoginEmail') || ''
   if (lastLoginEmail) {
     loginForm.email = lastLoginEmail
@@ -388,9 +425,43 @@ onMounted(() => {
 function setMode(newMode) {
   if (mode.value === newMode) return
   mode.value = newMode
-  // 清空校验状态
-  loginFormRef.value?.resetFields()
   registerFormRef.value?.resetFields()
+}
+
+/**
+ * 会员激活提交
+ */
+const handleVipActivate = async () => {
+  if (submitting.value) return
+  try {
+    if (!vipForm.code) {
+      message.error('请输入激活码')
+      return
+    }
+    submitting.value = true
+    const res = await authStore.activate(vipForm.code.trim())
+    if (res.success) {
+      message.success('会员激活成功')
+      vipModalOpen.value = false
+    } else {
+      message.error(res.error || '会员激活失败')
+    }
+  } finally {
+    submitting.value = false
+  }
+}
+
+const handleVipActivateCancel = () => {
+  vipModalOpen.value = false
+  router.replace('/home')
+}
+
+/**
+/**
+ * 显示会员激活弹窗
+ */
+const showVipActivateModal = () => {
+  vipModalOpen.value = true
 }
 
 // ============ 提交处理 ============
@@ -404,10 +475,37 @@ async function handleLoginSubmit() {
       autoLogin: loginForm.autoLogin
     })
     if (res.success) {
-      message.success('登录成功')
-      router.replace('/home')
+      if (!authStore.isVip) {
+        showVipActivateModal()
+      } else {
+        message.success('登录成功')
+        router.replace('/home')
+      }
     } else {
       message.error(res.error || '登录失败')
+    }
+  } finally {
+    submitting.value = false
+  }
+}
+
+/**
+ * 重置密码提交
+ */
+async function handleResetPasswordSubmit() {
+  if (submitting.value) return
+  submitting.value = true
+  try {
+    const res = await authStore.resetPassword({
+      email: resetPasswordForm.email,
+      code: resetPasswordForm.code,
+      password: resetPasswordForm.password
+    })
+    if (res.success) {
+      message.success('密码重置成功')
+      setMode('login')
+    } else {
+      message.error(res.error || '密码重置失败')
     }
   } finally {
     submitting.value = false
@@ -440,6 +538,38 @@ async function handleRegisterSubmit(values) {
 
 function onRegisterFinishFailed(errorInfo) {
   console.warn('注册表单校验失败:', errorInfo)
+}
+
+const resetCodeSending = ref(false)
+
+const { remaining, start, stop } = useCountdown(60, {
+  immediate: false,
+  onComplete: () => {
+    resetCodeSending.value = false
+  }
+})
+
+async function handleSendResetCode() {
+  if (resetCodeSending.value) return
+  // 验证email
+  await resetPasswordFormRef?.value?.validateFields('email')
+
+  if (!resetPasswordForm.email) return
+
+  try {
+    resetCodeSending.value = true
+    start()
+    const res = await window.api.user.sendResetCode(resetPasswordForm.email)
+    if (res.success) {
+      message.success('验证码发送成功')
+    } else {
+      resetCodeSending.value = false
+      stop()
+      message.error(res.error || '验证码发送失败')
+    }
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 

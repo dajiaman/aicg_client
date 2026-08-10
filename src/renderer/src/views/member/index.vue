@@ -13,7 +13,7 @@
             <div class="info-card">
               <span class="info-label">到期时间</span>
               <span class="info-value">
-                {{ dayjs(vip_expires_at).format('YYYY年MM月DD日') }}
+                {{ expiresText }}
               </span>
             </div>
             <div class="info-card">
@@ -59,12 +59,9 @@
 
       <div class="privileges-grid">
         <div class="privilege-card">
-          <div
-            class="card-icon"
-            style="
+          <div class="card-icon" style="
               background: linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%);
-            "
-          >
+            ">
             <FileTextOutlined />
           </div>
           <h3 class="card-title">无限次数</h3>
@@ -76,12 +73,9 @@
         </div>
 
         <div class="privilege-card">
-          <div
-            class="card-icon"
-            style="
+          <div class="card-icon" style="
               background: linear-gradient(135deg, rgb(240, 147, 251) 0%, rgb(245, 87, 108) 100%);
-            "
-          >
+            ">
             <SoundOutlined />
           </div>
           <h3 class="card-title">声音克隆</h3>
@@ -93,10 +87,8 @@
         </div>
 
         <div class="privilege-card">
-          <div
-            class="card-icon"
-            style="background: linear-gradient(135deg, rgb(79, 172, 254) 0%, rgb(0, 242, 254) 100%)"
-          >
+          <div class="card-icon"
+            style="background: linear-gradient(135deg, rgb(79, 172, 254) 0%, rgb(0, 242, 254) 100%)">
             <VideoCameraOutlined />
           </div>
           <h3 class="card-title">数字人生成</h3>
@@ -108,12 +100,9 @@
         </div>
 
         <div class="privilege-card">
-          <div
-            class="card-icon"
-            style="
+          <div class="card-icon" style="
               background: linear-gradient(135deg, rgb(67, 233, 123) 0%, rgb(56, 249, 215) 100%);
-            "
-          >
+            ">
             <RocketOutlined />
           </div>
           <h3 class="card-title">优先处理</h3>
@@ -125,12 +114,9 @@
         </div>
 
         <div class="privilege-card">
-          <div
-            class="card-icon"
-            style="
+          <div class="card-icon" style="
               background: linear-gradient(135deg, rgb(250, 112, 154) 0%, rgb(254, 225, 64) 100%);
-            "
-          >
+            ">
             <CustomerServiceOutlined />
           </div>
           <h3 class="card-title">专属客服</h3>
@@ -142,10 +128,8 @@
         </div>
 
         <div class="privilege-card">
-          <div
-            class="card-icon"
-            style="background: linear-gradient(135deg, rgb(48, 207, 208) 0%, rgb(51, 8, 103) 100%)"
-          >
+          <div class="card-icon"
+            style="background: linear-gradient(135deg, rgb(48, 207, 208) 0%, rgb(51, 8, 103) 100%)">
             <SafetyCertificateOutlined />
           </div>
           <h3 class="card-title">数据安全</h3>
@@ -199,13 +183,7 @@
       <span>所有功能均可无限次使用，无任何限制，让您的创作更加自由</span>
     </div>
 
-    <a-modal
-      title="激活VIP会员"
-      v-model:open="upgradeModalOpen"
-      centered
-      @ok="handleOk"
-      class="upgrade-modal-wrap"
-    >
+    <a-modal title="激活VIP会员" v-model:open="upgradeModalOpen" centered @ok="handleOk" class="upgrade-modal-wrap">
       <div class="upgrade-modal-content">
         <div class="modal-icon">
           <CrownOutlined />
@@ -259,7 +237,8 @@ import { computed, ref } from 'vue'
 import { message } from 'ant-design-vue'
 
 const authStore = useAuthStore()
-const vip_expires_at = computed(() => authStore.vip_expires_at)
+const vip_expires_at = computed(() => authStore.vip_expires_at || '')
+const expiresText = computed(() => dayjs(Number(vip_expires_at.value * 1000)).format('YYYY年MM月DD日'))
 const upgradeModalOpen = ref(false)
 
 const openUpgradeModal = () => {
@@ -270,8 +249,8 @@ const openUpgradeModal = () => {
 const activeCode = ref('')
 
 const leftDay = computed(() => {
-  return dayjs(vip_expires_at.value).diff(dayjs(), 'day') > 0
-    ? dayjs(vip_expires_at.value).diff(dayjs(), 'day')
+  return dayjs(Number(vip_expires_at.value * 1000)).diff(dayjs(), 'day') > 0
+    ? dayjs(Number(vip_expires_at.value * 1000)).diff(dayjs(), 'day')
     : 0
 })
 
@@ -283,10 +262,10 @@ const handleOk = async () => {
     message.warning('请输入激活码')
     return
   }
-
-  const res = await authStore.active(activeCode.value)
+  const res = await authStore.activate(activeCode.value)
   if (res.success) {
-    message.success('激活成功')
+    message.success('会员激活成功')
+    await authStore.getProfile()
     upgradeModalOpen.value = false
   } else {
     message.error(res.error || '激活失败')
@@ -364,11 +343,9 @@ const dataSource = [
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
-  background: linear-gradient(
-    135deg,
-    var(--theme-background) 0,
-    var(--theme-background-lighter) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--theme-background) 0,
+      var(--theme-background-lighter) 100%);
   min-height: 100vh;
 
   .member-banner {
@@ -568,11 +545,9 @@ const dataSource = [
 }
 
 .privilege-card {
-  background: linear-gradient(
-    135deg,
-    var(--theme-background-lighter) 0,
-    var(--theme-background-light) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--theme-background-lighter) 0,
+      var(--theme-background-light) 100%);
   border: 1px solid var(--theme-border-purple);
   border-radius: 12px;
   padding: 30px;
@@ -646,11 +621,9 @@ const dataSource = [
 }
 
 .comparison-table {
-  background: linear-gradient(
-    135deg,
-    var(--theme-background-lighter) 0,
-    var(--theme-background-light) 100%
-  );
+  background: linear-gradient(135deg,
+      var(--theme-background-lighter) 0,
+      var(--theme-background-light) 100%);
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--theme-border-purple);
@@ -661,7 +634,7 @@ const dataSource = [
   background: transparent;
 }
 
-.comparison-table .ant-table-thead > tr > th {
+.comparison-table .ant-table-thead>tr>th {
   background: var(--theme-scrollbar-track-light);
   font-weight: 600;
   font-size: var(--app-font-size-body);
@@ -669,14 +642,14 @@ const dataSource = [
   border-color: var(--theme-border);
 }
 
-.comparison-table .ant-table-tbody > tr > td {
-  background: transparent;
+.comparison-table .ant-table-tbody>tr>td {
+  background: transparent !important;
   color: var(--theme-text-tertiary);
   border-color: var(--theme-border);
 }
 
-.comparison-table .ant-table-tbody > tr:hover > td {
-  background: var(--theme-overlay-purple-strong);
+.comparison-table .ant-table-tbody>tr:hover>td {
+  background: var(--theme-overlay-purple-strong) !important;
 }
 
 .check-mark {

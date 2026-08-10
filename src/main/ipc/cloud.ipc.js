@@ -30,15 +30,36 @@ export function registerCloudIpc(ipcMain) {
         needForceUpdate: false,
         oemId: 'default',
         timestamp: new Date().toISOString(),
-        updateDescription: '',
+        updateDescription:
+          '版本升级，详情建文档 https://eyge2u9lbl.feishu.cn/wiki/OkFJwpdS7iAyivkB7LwcaLljnAb?from=from_copylink',
+        updateUrl: 'https://static-1251729840.cos.ap-guangzhou.myqcloud.com/update/default-8-5.zip',
         upgradeInfo: {
           forceUpdate: false,
           latestVersion: '1.0.0',
           minVersion: '1.0.0',
           oemId: 'default',
-          updateDescription: '',
-          updateUrl: ''
+          updateDescription:
+            '版本升级，详情建文档 https://eyge2u9lbl.feishu.cn/wiki/OkFJwpdS7iAyivkB7LwcaLljnAb?from=from_copylink',
+          updateUrl:
+            'https://static-1251729840.cos.ap-guangzhou.myqcloud.com/update/default-8-5.zip'
         }
+      }
+    }
+  })
+
+  /**
+   * 下载更新
+   */
+  ipcMain.handle('cloud:download-update', async (_, args) => {
+    const { updateUrl } = args
+
+    // 下载更新文件
+
+    return {
+      success: true,
+      message: '更新下载成功',
+      data: {
+        updateUrl
       }
     }
   })

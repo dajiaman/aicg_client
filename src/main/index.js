@@ -168,3 +168,5 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+console.log(import.meta.env)

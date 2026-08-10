@@ -2,14 +2,18 @@ import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    userInfo: JSON.parse(localStorage.getItem('userInfo') || '{}')
+    userInfo:
+      localStorage.getItem('userInfo') !== undefined
+        ? JSON.parse(localStorage.getItem('userInfo'))
+        : {}
   }),
   getters: {
     token: (state) => state.userInfo?.token || '',
     isLoggedIn: (state) => !!state.userInfo?.token,
-    vip_expires_at: (state) => state.userInfo?.user?.vip_expires_at || '',
-    displayName: (state) => state.userInfo?.user?.username || state.userInfo?.user?.email || '',
-    isVip: (state) => (state.userInfo?.user?.is_vip == 1 ? true : false)
+    vip_expires_at: (state) => state.userInfo?.vip_expires_at || '',
+    displayName: (state) => state.userInfo?.username || state.userInfo?.email || '',
+    isVip: (state) => (state.userInfo?.is_vip == 1 ? true : false),
+    isActive: (state) => (state.userInfo?.status == 'normal' ? true : false)
   },
   actions: {
     setUserInfo(user) {
@@ -19,7 +23,6 @@ export const useAuthStore = defineStore('auth', {
     reset() {
       this.token = ''
       this.userInfo = { username: '', email: '' }
-      this.signInfo = {}
       localStorage.removeItem('userInfo')
     },
     /**
@@ -46,18 +49,19 @@ export const useAuthStore = defineStore('auth', {
     async login(form) {
       try {
         const res = await window.api.user.login(form.email.trim(), form.password.trim())
+        console.log('login res:', res)
         if (res?.success && res.data) {
-          this.setUserInfo(res.data)
+          this.setUserInfo(res.data.userinfo)
+          window.api.config.set('auth.token', res.data.userinfo.token || '', 'auth')
           // 自动登录
           if (form.autoLogin) {
             this.setAutoLoginCredentials({
               ...form
             })
           }
-
           // 通知登录成功
           window.api.user.notifyLoginSuccess()
-          return { success: true }
+          return { success: true, data: res.data }
         }
         return { success: false, error: res?.error || '登录失败' }
       } catch (e) {
@@ -70,14 +74,37 @@ export const useAuthStore = defineStore('auth', {
      */
     async getProfile() {
       const res = await window.api.user.getProfile()
+      console.log('getProfile res:', res)
       if (res?.success && res.data) {
         this.setUserInfo({
-          ...this.userInfo,
-          ...res.data
+          ...res.data.userinfo
         })
-        return res.data
+        return {
+          success: true,
+          data: res.data.userinfo
+        }
       }
+
       return {}
+    },
+
+    /**
+     * 重置密码
+     * @param {{ email: string, code: string, password: string }} form
+     * @returns {Promise<{ success: boolean, error?: string }>}
+     */
+    async resetPassword(form) {
+      try {
+        const res = await window.api.user.resetPassword(
+          form.email.trim(),
+          form.code.trim(),
+          form.password.trim()
+        )
+        console.log('resetPassword res:', res)
+        return res
+      } catch (e) {
+        return { success: false, error: e?.message || '重置密码失败' }
+      }
     },
 
     /**
@@ -107,6 +134,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('userInfo')
       localStorage.removeItem('autoLoginCredentials')
       this.reset()
+      window.api.config.set('auth.token', '', 'auth')
       return true
     },
 
@@ -115,11 +143,20 @@ export const useAuthStore = defineStore('auth', {
      * @param {string} activeCode - 激活码
      * @returns {Promise<{ success: boolean, error?: string }>}
      */
-    async active(activeCode) {
+    async activate(activeCode) {
       try {
+        if (!activeCode) return { success: false, error: '激活码不能为空' }
         if (!this.token) return { success: false, error: '未登录' }
+
+        console.log('activeCode:', activeCode)
+        console.log('token:', this.token)
+
         const res = await window.api.user.activate(activeCode.trim(), this.token)
-        if (res?.success) return { success: true }
+        if (res?.success) {
+          await this.getProfile()
+          return { success: true, message: '会员激活成功' }
+        }
+
         return { success: false, error: res?.error || '激活失败' }
       } catch (e) {
         return { success: false, error: e?.message || '激活失败' }

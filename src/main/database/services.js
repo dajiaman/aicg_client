@@ -130,7 +130,8 @@ const config = {
   get(key) {
     const db = getDb()
     const row = db.prepare('SELECT value FROM config WHERE key = ?').get(key)
-    return row ? parseJSON(row.value, row.value) : row.value
+    if (!row) return ''
+    return row ? parseJSON(row.value, row.value) : row
   },
 
   /**

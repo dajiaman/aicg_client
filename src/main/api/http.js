@@ -87,6 +87,12 @@ function createInstance() {
         if (data.code == 1) {
           return { success: true, data: data.data ?? null, error: null, raw: data }
         }
+
+        if (data.code === 401) {
+          models.config.set('auth.token', '', 'auth')
+          return { success: false, error: data.msg || '登录过期，请重新登录' }
+        }
+
         return {
           success: false,
           data: null,
@@ -99,7 +105,6 @@ function createInstance() {
       return { success: true, data, error: null, raw: data }
     },
     async (error) => {
-      console.log('error:', error)
       const { config, response } = error || {}
       const status = response?.status
       const ms = config ? Date.now() - (config.metadata?.start || Date.now()) : 0

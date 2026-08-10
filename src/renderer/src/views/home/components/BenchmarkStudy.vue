@@ -7,9 +7,8 @@
           <div class="glass-card form-card">
             <div class="card-mini-title">视频链接</div>
             <div class="input-actions">
-              <a-button type="link" size="sm" danger
-              v-if="videoLink"
-              class="clear-action" @click="clearExtract">清除</a-button>
+              <a-button type="link" size="sm" danger v-if="videoLink" class="clear-action"
+                @click="clearExtract">清除</a-button>
             </div>
             <div class="link-input-shell" data-guide="extract-video-link">
               <LinkOutlined class="link-input-icon" />
@@ -108,7 +107,7 @@
                       <div class="archive-name">{{ archive.name }}</div>
                       <span class="archive-depth-tag">{{
                         archive.deepLearning == 0 ? '浅度学习' : '深度学习'
-                        }}</span>
+                      }}</span>
                     </div>
                     <div class="archive-meta">
                       创建时间：
@@ -326,7 +325,7 @@
             <span class="selected-info-label">已选：</span>
             <span class="selected-info-value">{{
               selectedKeywordTopic ? selectedKeywordTopic.title : '未选择'
-              }}</span>
+            }}</span>
           </div>
           <a-select v-model:value="topicWordCountType" class="keyword-word-select"
             :disabled="!selectedKeywordTopic || topicCopyGenerating">

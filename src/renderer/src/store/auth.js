@@ -8,17 +8,17 @@ export const useAuthStore = defineStore('auth', {
         : {}
   }),
   getters: {
-    token: (state) => state.userInfo?.token || '',
-    isLoggedIn: (state) => !!state.userInfo?.token,
-    vip_expires_at: (state) => state.userInfo?.vip_expires_at || '',
-    displayName: (state) => state.userInfo?.username || state.userInfo?.email || '',
-    isVip: (state) => (state.userInfo?.is_vip == 1 ? true : false),
-    isActive: (state) => (state.userInfo?.status == 'normal' ? true : false)
+    token: (state) => state.userInfo?.user?.token || '',
+    isLoggedIn: (state) => !!state.userInfo?.user?.token,
+    vip_expires_at: (state) => state.userInfo?.user?.vip_expires_at || '',
+    displayName: (state) => state.userInfo?.user?.username || state.userInfo?.user?.email || '',
+    isVip: (state) => (state.userInfo?.user?.is_vip == 1 ? true : false),
+    isActive: (state) => (state.userInfo?.user?.is_active == 1 ? true : false)
   },
   actions: {
-    setUserInfo(user) {
-      this.userInfo = user
-      localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
+    setUserInfo(userInfo) {
+      this.userInfo = userInfo
+      localStorage.setItem('userInfo', JSON.stringify(userInfo))
     },
     reset() {
       this.token = ''
@@ -41,6 +41,10 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('autoLoginCredentials', JSON.stringify(credentials))
     },
 
+    saveToken(token) {
+      window.api.config.set('auth.token', token || '', 'auth')
+    },
+
     /**
      * 登录
      * @param {{ email: string, password: string, remember?: boolean }} form
@@ -51,20 +55,21 @@ export const useAuthStore = defineStore('auth', {
         const res = await window.api.user.login(form.email.trim(), form.password.trim())
         console.log('login res:', res)
         if (res?.success && res.data) {
-          this.setUserInfo(res.data.userinfo)
-          window.api.config.set('auth.token', res.data.userinfo.token || '', 'auth')
+          this.setUserInfo(res.data)
+          this.saveToken(res.data.token)
+          this.setLastLoginEmail(form.email.trim())
+
           // 自动登录
           if (form.autoLogin) {
             this.setAutoLoginCredentials({
               ...form
             })
           }
-          // 通知登录成功
-          window.api.user.notifyLoginSuccess()
           return { success: true, data: res.data }
         }
         return { success: false, error: res?.error || '登录失败' }
       } catch (e) {
+        console.error('登录失败:', e)
         return { success: false, error: e?.message || '登录失败' }
       }
     },
@@ -74,18 +79,18 @@ export const useAuthStore = defineStore('auth', {
      */
     async getProfile() {
       const res = await window.api.user.getProfile()
-      console.log('getProfile res:', res)
       if (res?.success && res.data) {
         this.setUserInfo({
-          ...res.data.userinfo
+          ...this.userInfo,
+          ...res.data
         })
         return {
           success: true,
           data: res.data.userinfo
         }
+      } else {
+        return { success: false, error: res?.error || '获取用户信息失败' }
       }
-
-      return {}
     },
 
     /**
@@ -100,7 +105,6 @@ export const useAuthStore = defineStore('auth', {
           form.code.trim(),
           form.password.trim()
         )
-        console.log('resetPassword res:', res)
         return res
       } catch (e) {
         return { success: false, error: e?.message || '重置密码失败' }
@@ -131,10 +135,10 @@ export const useAuthStore = defineStore('auth', {
      */
     async logout() {
       console.log('logout')
+      window.api.config.set('auth.token', '', 'auth')
       localStorage.removeItem('userInfo')
       localStorage.removeItem('autoLoginCredentials')
       this.reset()
-      window.api.config.set('auth.token', '', 'auth')
       return true
     },
 

@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons-vue'
 import BenchmarkProgress from '../../../components/BenchmarkProgress.vue'
 
-const { pipeline, updatePipelineData } = usePipeline()
+const { updatePipelineData } = usePipeline()
 
 // 使用发布逻辑
 const {
@@ -58,33 +58,6 @@ const {
   handleSelectCover,
   handlePublish
 } = usePublish()
-
-// 已选账号数
-const selectedCount = computed(() => selectedAccounts.value.length)
-
-// 已选账号对应的平台数（用于分组显示）
-const selectedPlatformCount = computed(() => {
-  const platforms = new Set()
-  allAccounts.value.forEach((acc) => {
-    if (selectedAccounts.value.includes(acc.id)) {
-      platforms.add(acc.platform)
-    }
-  })
-  return platforms.size
-})
-
-// 清空视频
-const clearVideo = () => {
-  publishVideoPath.value = ''
-  updatePipelineData({ publishVideoPath: '' })
-}
-
-// 清空封面
-const clearCover = () => {
-  coverPath.value = ''
-  coverPreviewSrc.value = ''
-  updatePipelineData({ coverPath: '', coverUrl: '' })
-}
 
 watch(
   [

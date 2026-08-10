@@ -67,6 +67,7 @@ const onDesignerConfirm = (result) => {
 // ---------- AI 生成标题 + 封面（一键） ----------
 const handleAIGenerate = async () => {
   if (!checkFullPermission('标题封面')) return
+
   if (aiGenerating.value) return
 
   try {
@@ -74,11 +75,15 @@ const handleAIGenerate = async () => {
 
     // 先生成标题
     const titleResult = await generateTitleOnly()
-    if (!titleResult.success) return
+    if (!titleResult.success) {
+      aiGenerating.value = false
+    }
 
     // 再生成封面
     const generateRes = await generateCover(publishTitle.value)
-    if (!generateRes.success) return
+    if (!generateRes.success) {
+      aiGenerating.value = false
+    }
 
     notifyStepComplete('titleCover', {
       publishTitle: publishTitle.value,
@@ -87,6 +92,7 @@ const handleAIGenerate = async () => {
       coverPath: generateRes.data.coverPath
     })
   } catch (err) {
+    aiGenerating.value = false
     console.error('AI生成标题失败:', err)
     message.error('AI生成标题失败：' + err.message)
     progressText.value = '生成失败'
@@ -250,16 +256,19 @@ defineExpose({
 
           <div class="designer-actions">
             <span class="generate-guide" v-if="showGenerateGuide">先点这里生成标题和封面 </span>
-            <button class="ai-btn" @click="handleAIGenerate" :loading="aiGenerating" :disabled="aiGenerating">
+            <button class="ai-btn" @click="handleAIGenerate" :loading="aiGenerating"
+              :disabled="aiGenerating || !designerVideoPath">
               <FileTextOutlined />
               {{ aiGenerating ? '生成中' : '一键生成' }}
             </button>
-            <button class="ghost-action compact" @click="handleOpenCover">打开封面</button>
-            <button class="ghost-action compact" @click="handleExportCover">
+            <button class="ghost-action compact" @click="handleOpenCover"
+            :disabled="!coverPath"
+            >打开封面</button>
+            <button class="ghost-action compact" @click="handleExportCover" :disabled="aiGenerating">
               <ExportOutlined />
               生成并导出封面
             </button>
-            <button class="primary-action compact" @click="handleExportCoverVideo">
+            <button class="primary-action compact" @click="handleExportCoverVideo" :disabled="aiGenerating">
               <VideoCameraOutlined />
               生成并导出封面视频
             </button>

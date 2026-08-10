@@ -5,8 +5,25 @@
       <div class="section-title">字体与字号</div>
       <a-row :gutter="8" align="middle">
         <a-col :span="14">
-          <a-select :value="style.fontFamily" :options="displayFonts" :field-names="{ label: 'label', value: 'value' }"
-            style="width: 100%" size="small" @change="(v) => updateStyle('fontFamily', v)" />
+          <a-select
+            :value="style.fontFamily"
+            :options="displayFonts"
+            :field-names="{ label: 'label', value: 'value' }"
+            style="width: 100%"
+            size="small"
+            :option-label-prop="'label'"
+            :dropdown-style="fontDropdownStyle"
+            @change="(v) => updateStyle('fontFamily', v)"
+          >
+            <template #default>
+              <span :style="{ fontFamily: currentFontCSS }">
+                {{ style.fontFamily || '选择字体' }}
+              </span>
+            </template>
+            <template #option="{ value, label }">
+              <span :style="{ fontFamily: `'${value}', sans-serif` }">{{ label }}</span>
+            </template>
+          </a-select>
         </a-col>
         <a-col :span="10">
           <div class="slider-with-input">
@@ -251,6 +268,19 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
+
+// 字体下拉面板：限制高度滚动；单条高度让中文字号显示得舒服
+const fontDropdownStyle = {
+  maxHeight: '320px',
+  overflowY: 'auto',
+  padding: '4px 0'
+}
+
+// 当前选中字体 → CSS font-family 字符串（供 :style 与 v-bind 使用）
+const currentFontCSS = computed(() => {
+  const f = props.modelValue?.fontFamily
+  return f ? `'${f}', sans-serif` : 'inherit'
+})
 
 // ==================== Props ====================
 const props = defineProps({
@@ -540,5 +570,23 @@ defineExpose({
 :deep(.ant-segmented-item-selected) {
   background: #d946ef !important;
   color: #fff !important;
+}
+
+/* 字体下拉项：稍大字号 + 上下 padding，方便预览字体 */
+:deep(.ant-select-dropdown .ant-select-item-option) {
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+:deep(.ant-select-dropdown .ant-select-item-option-active:not(.ant-select-item-option-disabled)) {
+  background: rgba(217, 70, 239, 0.12);
+}
+
+/* 选中态的 select 显示文字：跟随当前字体 */
+:deep(.ant-select-selection-item) {
+  font-size: 13px;
+  line-height: 1.4;
+  font-family: v-bind('currentFontCSS');
 }
 </style>

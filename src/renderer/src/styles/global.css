@@ -661,7 +661,9 @@
     cursor: pointer;
     transition: background-color .2s;
     font-size: var(--app-font-size-body);
-    border-radius: 4px
+    border-radius: 4px;
+    outline: none;
+
 }
 
 .control-btn:hover,.maximize-btn:hover,.minimize-btn:hover {

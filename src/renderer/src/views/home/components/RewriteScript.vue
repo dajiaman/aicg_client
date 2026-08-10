@@ -262,6 +262,7 @@ const canLegalReview = computed(() => {
  */
 const handleLegalReview = async () => {
   if (!checkFullPermission('法务审核')) return
+
   if (!canLegalReview.value) {
     message.warning('请先改写或填写文案')
     return

@@ -71,9 +71,9 @@
             class="user-avatar-img"
             style="width: 32px; height: 32px; line-height: 32px; font-size: 18px"
           >
-            {{ username.slice(0, 1).toUpperCase() }}
+            {{ displayName.slice(0, 1).toUpperCase() }}
           </a-avatar>
-          <span class="user-name">{{ username }}</span>
+          <span class="user-name">{{ displayName }}</span>
           <DownOutlined :style="{ fontSize: '10px' }" class="dropdown-icon" />
         </div>
         <template #overlay>
@@ -102,7 +102,7 @@
       </a-dropdown>
 
       <div class="window-controls">
-        <button class="control-btn minimize-btn" title="最小化" @click="handleMinimizeWindow">
+        <button class="control-btn minimize-btn" title="最小化" @click="handleMinimizeWindow" tabindex="0">
           <MinusOutlined />
         </button>
         <button
@@ -110,6 +110,7 @@
           title="最大化"
           @click="handleMaximizeWindow"
           v-if="!isMaximized"
+
         >
           <BorderOutlined />
         </button>
@@ -118,10 +119,11 @@
           title="取消最大化"
           @click="handleUnmaximizeWindow"
           v-if="isMaximized"
+          tabindex="0"
         >
           <CompressOutlined />
         </button>
-        <button class="control-btn close-btn" title="关闭" @click="handleCloseWindow">
+        <button class="control-btn close-btn" title="关闭" @click="handleCloseWindow" >
           <CloseOutlined />
         </button>
       </div>
@@ -154,7 +156,9 @@ import { useAuthStore } from '../store/auth'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const username = computed(() => authStore.displayName || '用户')
+const displayName = computed(() => {
+  return authStore.displayName || '用户'
+})
 
 // 当前激活菜单（key 与路由路径对应）
 const selectedKeys = ref([])
@@ -220,7 +224,11 @@ const navItemClick = (path) => {
  * 退出登录
  */
 const handleLogout = async () => {
-  await authStore.logout()
-  router.replace('/login')
+  try {
+    await authStore.logout()
+    router.push('/login')
+  } catch (error) {
+    console.error('退出登录失败:', error)
+  }
 }
 </script>

@@ -82,3 +82,6 @@ playwright-core/.local-browsers/
 # 如果项目需要随仓库分发字体，删掉下面这两行
 # resources/fonts/*
 # !resources/fonts/*.md
+
+demo.mp4
+cookies

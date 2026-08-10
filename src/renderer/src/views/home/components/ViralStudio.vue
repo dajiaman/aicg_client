@@ -13,6 +13,7 @@ import BenchmarkProgress from '../../../components/BenchmarkProgress.vue'
 import PreviewStage from '../../../components/studio/PreviewStage.vue'
 import SubtitleSettingsModal from '../../../components/studio/SubtitleSettingsModal.vue'
 import { subtitleStylePresets, titleStylePresets } from '../../../constants/index.js'
+import { usePermission } from '../../../hooks/usePermission.js'
 
 import StudioHeader from '../../../components/studio/StudioHeader.vue'
 import { useVideoEdit } from '../../../hooks/useVideoEdit.js'
@@ -34,7 +35,7 @@ const {
   videoGenerating,
   titleGenerating,
   previewingBgm,
-
+  progressText,
   // 计算
   displayVideoPath,
   displayVideoSrc,
@@ -65,6 +66,7 @@ const {
 const { pipeline,
   updatePipelineData,
   notifyStepStart, notifyStepError, notifyStepComplete } = usePipeline()
+const { checkFullPermission } = usePermission()
 
 const activeModule = ref('subtitle')
 const previewMode = ref('edit') // 'edit' | 'rendered'
@@ -741,6 +743,8 @@ const handleGenerateTitleText = () => {
  * 生成视频
  */
 const handleGenerateVideo = async () => {
+  if (!checkFullPermission('视频剪辑')) return
+
   try {
     const videoPath = sourceVideoPath.value
 
@@ -837,6 +841,8 @@ const handleUpdatePreviewMode = (newMode) => {
         :data-source-video-src="displayVideoSrc" />
     </div>
 
+    <BenchmarkProgress :loading="loading" :text="progressText"/>
+
     <!-- ===== 字幕设置弹窗 ===== -->
     <SubtitleSettingsModal v-model:open="showSubtitleModal" :initial-config="config.subtitle.customConfig"
       :modal-width="modalWidth" @confirm="handleSubtitleConfirm" @cancel="showSubtitleModal = false" />
@@ -913,7 +919,7 @@ const handleUpdatePreviewMode = (newMode) => {
                     <span class="pip-row-text">{{ row.text || '空字幕' }}</span>
                     <span v-if="row.pipVideoPath" class="pip-row-media">{{
                       getFileName(row.pipVideoPath)
-                      }}</span>
+                    }}</span>
                   </span>
                 </button>
               </div>
@@ -952,7 +958,7 @@ const handleUpdatePreviewMode = (newMode) => {
                     <span class="pip-material-info">
                       <span class="pip-material-name">{{
                         item.file_name || getFileName(item.filePath)
-                        }}</span>
+                      }}</span>
                       <span class="pip-material-meta">
                         {{ formatPipDuration(item.duration) }}s ·
                         {{ formatPipFileSize(item.file_size) }}

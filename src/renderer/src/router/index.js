@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import DefaultLayout from '../layouts/default.vue'
 import HomeView from '../views/home/index.vue'
-import store from '../store/index.js'
+
 
 const routes = [
   {
@@ -102,6 +102,7 @@ router.beforeEach((to, from, next) => {
   if (to.name === 'Login') {
     next()
   }
+
   next()
 })
 

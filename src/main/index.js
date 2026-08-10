@@ -65,14 +65,12 @@ function createWindow() {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}#/login`)
+    mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}`)
     // mainWindow.loadURL('http://localhost:3000')
   } else {
     mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
 }
-
-
 
 function createWindow2() {
   // Create the browser window.
@@ -123,7 +121,6 @@ function createWindow2() {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-
     mainWindow.loadURL('http://localhost:3000')
   } else {
     mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
@@ -154,7 +151,7 @@ app.whenReady().then(() => {
   registerAllIpc(ipcMain)
 
   createWindow()
-  createWindow2()
+  // createWindow2()
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
@@ -169,4 +166,4 @@ app.on('window-all-closed', () => {
   }
 })
 
-console.log(import.meta.env)
+

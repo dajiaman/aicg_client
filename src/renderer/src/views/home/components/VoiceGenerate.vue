@@ -1013,7 +1013,7 @@ const handleEmotionChange = (val) => {
               <div class="emotion-row">
                 <a-select v-model:value="selectedEmotionType" @change="handleEmotionChange">
                   <a-select-option :value="index" v-for="(label, index) in emotionLabels" :key="index">{{ label
-                  }}</a-select-option>
+                    }}</a-select-option>
                 </a-select>
                 <a-input-number v-model:value="emotionWeight" :min="0.0" :max="1.0" :step="0.1" />
               </div>

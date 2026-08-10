@@ -318,15 +318,15 @@ const transformerConfig = computed(() => ({
     selectedId.value === 'mask'
       ? ['top-left', 'top-right', 'bottom-left', 'bottom-right']
       : [
-          'top-left',
-          'top-center',
-          'top-right',
-          'middle-left',
-          'middle-right',
-          'bottom-left',
-          'bottom-center',
-          'bottom-right'
-        ],
+        'top-left',
+        'top-center',
+        'top-right',
+        'middle-left',
+        'middle-right',
+        'bottom-left',
+        'bottom-center',
+        'bottom-right'
+      ],
   anchorSize: 8,
   borderStroke: '#1890ff',
   anchorStroke: '#1890ff',
@@ -370,15 +370,15 @@ const applyTemplate = (templateId) => {
       },
       fillLinearGradientStartPoint: tpl.mask.fillLinearGradientStartPoint
         ? {
-            x: tpl.mask.fillLinearGradientStartPoint.x * scaleX,
-            y: tpl.mask.fillLinearGradientStartPoint.y * scaleY
-          }
+          x: tpl.mask.fillLinearGradientStartPoint.x * scaleX,
+          y: tpl.mask.fillLinearGradientStartPoint.y * scaleY
+        }
         : null,
       fillLinearGradientEndPoint: tpl.mask.fillLinearGradientEndPoint
         ? {
-            x: tpl.mask.fillLinearGradientEndPoint.x * scaleX,
-            y: tpl.mask.fillLinearGradientEndPoint.y * scaleY
-          }
+          x: tpl.mask.fillLinearGradientEndPoint.x * scaleX,
+          y: tpl.mask.fillLinearGradientEndPoint.y * scaleY
+        }
         : null,
       fillLinearGradientColorStops: tpl.mask.fillLinearGradientColorStops
         ? [...tpl.mask.fillLinearGradientColorStops]
@@ -1768,9 +1768,8 @@ const formatTime = (sec) => {
   const r = s - m * 60
   const wholeSec = Math.floor(r)
   const ms = Math.round((r - wholeSec) * 100)
-  return `${String(m).padStart(2, '0')}:${String(wholeSec).padStart(2, '0')}${
-    ms > 0 ? '.' + String(ms).padStart(2, '0') : ''
-  }`
+  return `${String(m).padStart(2, '0')}:${String(wholeSec).padStart(2, '0')}${ms > 0 ? '.' + String(ms).padStart(2, '0') : ''
+    }`
 }
 
 // 右侧 Tab 列表
@@ -1802,26 +1801,15 @@ defineExpose({
         </div>
 
         <div class="cd-stage-wrapper" ref="stageWrapperRef">
-          <v-stage
-            ref="stageRef"
-            :config="stageConfig"
-            @mousedown="handleStageMouseDown"
-            @touchstart="handleStageMouseDown"
-          >
+          <v-stage ref="stageRef" :config="stageConfig" @mousedown="handleStageMouseDown"
+            @touchstart="handleStageMouseDown">
             <v-layer ref="maskRef">
               <v-image v-if="backgroundSrc" :config="bgImageConfig" />
               <v-rect v-else :config="bgPlaceholderConfig" />
 
               <!-- 遮罩图层 -->
-              <v-rect
-                v-if="currentMask.enabled"
-                ref="maskRectRef"
-                :config="maskRectConfig"
-                @click="selectItem('mask')"
-                @tap="selectItem('mask')"
-                @dragend="onMaskDragEnd"
-                @transformend="onMaskTransformEnd"
-              />
+              <v-rect v-if="currentMask.enabled" ref="maskRectRef" :config="maskRectConfig" @click="selectItem('mask')"
+                @tap="selectItem('mask')" @dragend="onMaskDragEnd" @transformend="onMaskTransformEnd" />
 
               <!-- 形状图层 -->
               <template v-for="shape in shapes" :key="shape.id">
@@ -1830,26 +1818,16 @@ defineExpose({
 
               <!-- 文本图层 -->
               <template v-for="layer in textLayers" :key="layer.id">
-                <v-text
-                  :ref="
-                    (el) => {
-                      if (el) textRefs[layer.id] = el
-                    }
-                  "
-                  :config="getLayerTextConfig(layer)"
-                  @click="selectItem(layer.id)"
-                  @tap="selectItem(layer.id)"
-                  @dblclick="editTextLayer(layer.id)"
-                  @dbltap="editTextLayer(layer.id)"
-                  @dragend="(e) => onLayerDragEnd(e, layer)"
-                  @transformend="(e) => onLayerTransformEnd(e, layer)"
-                />
+                <v-text :ref="(el) => {
+                  if (el) textRefs[layer.id] = el
+                }
+                  " :config="getLayerTextConfig(layer)" @click="selectItem(layer.id)" @tap="selectItem(layer.id)"
+                  @dblclick="editTextLayer(layer.id)" @dbltap="editTextLayer(layer.id)"
+                  @dragend="(e) => onLayerDragEnd(e, layer)" @transformend="(e) => onLayerTransformEnd(e, layer)" />
 
                 <!-- 文字背景 -->
-                <v-rect
-                  v-if="layer.style.background && layer.style.background.enabled"
-                  :config="getLayerBgConfig(layer)"
-                />
+                <v-rect v-if="layer.style.background && layer.style.background.enabled"
+                  :config="getLayerBgConfig(layer)" />
               </template>
 
               <!-- 变换器（选中框） -->
@@ -1860,13 +1838,8 @@ defineExpose({
 
         <div class="cd-preview-footer">
           <span class="cd-preview-tip">点击文字可选中删除，双击文字可直接修改</span>
-          <a-space>
-            <a-button
-              size="sm"
-              danger
-              :disabled="!selectedId || selectedId === 'mask'"
-              @click="removeSelectedLayer"
-            >
+          <a-space class="cd-preview-actions">
+            <a-button size="sm" danger :disabled="!selectedId || selectedId === 'mask'" @click="removeSelectedLayer">
               <DeleteOutlined />
               删除选中图层
             </a-button>
@@ -1883,28 +1856,17 @@ defineExpose({
           <a-tab-pane key="template" tab="模板">
             <div class="flex-1 overflow-y-auto pr-1 side-scroll cd-scroll">
               <div class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(130px,1fr))]">
-                <div
-                  v-for="tpl in coverTemplates"
-                  :key="tpl.id"
+                <div v-for="tpl in coverTemplates" :key="tpl.id"
                   class="group flex flex-col items-center gap-1.5 rounded-[10px] border p-2 cursor-pointer transition bg-white/5 border-white/10 hover:bg-white/10 hover:-translate-y-0.5"
                   :class="[
                     currentTemplateId === tpl.id
                       ? 'border-fuchsia-500/70 bg-fuchsia-500/10 shadow-[0_0_0_2px_rgba(168,85,247,0.25)]'
                       : ''
-                  ]"
-                  @click="applyTemplate(tpl.id)"
-                >
-                  <div
-                    class="relative w-full aspect-[1080/1920] rounded-md overflow-hidden bg-black"
-                  >
-                    <CoverTemplateThumbnail
-                      :template="tpl"
-                      :title-main="props.titleMain"
-                      :title-sub="props.titleSub"
-                      :title="props.title"
-                      :background-src="backgroundSrc"
-                      class="absolute inset-0 w-full h-full object-cover"
-                    />
+                  ]" @click="applyTemplate(tpl.id)">
+                  <div class="relative w-full aspect-[1080/1920] rounded-md overflow-hidden bg-black">
+                    <CoverTemplateThumbnail :template="tpl" :title-main="props.titleMain" :title-sub="props.titleSub"
+                      :title="props.title" :background-src="backgroundSrc"
+                      class="absolute inset-0 w-full h-full object-cover" />
 
                     <!-- 设为默认：星星图标，已默认则常显高亮，否则 hover 才显示 -->
                     <button
@@ -1913,25 +1875,17 @@ defineExpose({
                         defaultTemplateId === tpl.id
                           ? 'text-amber-400 bg-black/50 hover:bg-black/70 opacity-100'
                           : 'text-gray-300/70 bg-black/40 hover:text-amber-300 hover:bg-black/60 opacity-0 group-hover:opacity-100'
-                      ]"
-                      :title="defaultTemplateId === tpl.id ? '取消默认' : '设为默认'"
-                      @click.stop="toggleDefaultTemplate(tpl.id)"
-                    >
+                      ]" :title="defaultTemplateId === tpl.id ? '取消默认' : '设为默认'"
+                      @click.stop="toggleDefaultTemplate(tpl.id)">
                       <span>{{ defaultTemplateId === tpl.id ? '★' : '☆' }}</span>
                     </button>
 
-                    <span
-                      v-if="currentTemplateId === tpl.id"
-                      class="absolute top-1 left-1 bg-fuchsia-500/95 text-white text-[10px] px-1.5 py-0.5 rounded font-medium"
-                      >已选</span
-                    >
+                    <span v-if="currentTemplateId === tpl.id"
+                      class="absolute top-1 left-1 bg-fuchsia-500/95 text-white text-[10px] px-1.5 py-0.5 rounded font-medium">已选</span>
 
                     <!-- 默认角标：已默认且非当前选中时，hover 才显示 -->
-                    <span
-                      v-else-if="defaultTemplateId === tpl.id"
-                      class="absolute bottom-1 left-1 bg-amber-400/95 text-black text-[10px] px-1.5 py-0.5 rounded font-medium opacity-0 group-hover:opacity-100 transition-opacity"
-                      >默认</span
-                    >
+                    <span v-else-if="defaultTemplateId === tpl.id"
+                      class="absolute bottom-1 left-1 bg-amber-400/95 text-black text-[10px] px-1.5 py-0.5 rounded font-medium opacity-0 group-hover:opacity-100 transition-opacity">默认</span>
                   </div>
                   <div class="text-xs text-gray-300 text-center truncate w-full">
                     {{ tpl.name }}
@@ -1947,68 +1901,41 @@ defineExpose({
               <div class="grid grid-cols-3 gap-2 mb-3">
                 <button
                   class="flex flex-col items-center gap-1 rounded-xl p-2.5 border transition bg-white/5 border-white/10 hover:bg-white/10"
-                  :class="
-                    sourceMode === 'auto'
-                      ? 'bg-fuchsia-500/25 border-fuchsia-400/80 text-white'
-                      : 'text-gray-300'
-                  "
-                  @click="sourceMode = 'auto'"
-                >
+                  :class="sourceMode === 'auto'
+                    ? 'bg-fuchsia-500/25 border-fuchsia-400/80 text-white'
+                    : 'text-gray-300'
+                    " @click="sourceMode = 'auto'">
                   <span class="text-lg">🎬</span>
-                  <span class="block"
-                    ><b class="block text-[13px] font-medium whitespace-nowrap">自动抽帧</b
-                    ><small
-                      class="block text-[10px] text-gray-400 mt-0.5 whitespace-nowrap truncate"
-                      >视频前5秒随机取帧</small
-                    ></span
-                  >
+                  <span class="block"><b class="block text-[13px] font-medium whitespace-nowrap">自动抽帧</b><small
+                      class="block text-[10px] text-gray-400 mt-0.5 whitespace-nowrap truncate">视频前5秒随机取帧</small></span>
                 </button>
                 <button
                   class="flex flex-col items-center gap-1 rounded-xl p-2.5 border transition bg-white/5 border-white/10 hover:bg-white/10"
-                  :class="
-                    sourceMode === 'timeline'
-                      ? 'bg-fuchsia-500/25 border-fuchsia-400/80 text-white'
-                      : 'text-gray-300'
-                  "
-                  @click="sourceMode = 'timeline'"
-                >
+                  :class="sourceMode === 'timeline'
+                    ? 'bg-fuchsia-500/25 border-fuchsia-400/80 text-white'
+                    : 'text-gray-300'
+                    " @click="sourceMode = 'timeline'">
                   <span class="text-lg">🖼</span>
-                  <span class="block"
-                    ><b class="block text-[13px] font-medium whitespace-nowrap">时间轴选帧</b
-                    ><small
-                      class="block text-[10px] text-gray-400 mt-0.5 whitespace-nowrap truncate"
-                      >拖动进度条后使用当前帧</small
-                    ></span
-                  >
+                  <span class="block"><b class="block text-[13px] font-medium whitespace-nowrap">时间轴选帧</b><small
+                      class="block text-[10px] text-gray-400 mt-0.5 whitespace-nowrap truncate">拖动进度条后使用当前帧</small></span>
                 </button>
                 <button
                   class="flex flex-col items-center gap-1 rounded-xl p-2.5 border transition bg-white/5 border-white/10 hover:bg-white/10"
-                  :class="
-                    sourceMode === 'upload'
-                      ? 'bg-fuchsia-500/25 border-fuchsia-400/80 text-white'
-                      : 'text-gray-300'
-                  "
-                  @click="sourceMode = 'upload'"
-                >
+                  :class="sourceMode === 'upload'
+                    ? 'bg-fuchsia-500/25 border-fuchsia-400/80 text-white'
+                    : 'text-gray-300'
+                    " @click="sourceMode = 'upload'">
                   <span class="text-lg">📤</span>
-                  <span class="block"
-                    ><b class="block text-[13px] font-medium whitespace-nowrap">上传图片</b
-                    ><small
-                      class="block text-[10px] text-gray-400 mt-0.5 whitespace-nowrap truncate"
-                      >支持 jpg / png 格式</small
-                    ></span
-                  >
+                  <span class="block"><b class="block text-[13px] font-medium whitespace-nowrap">上传图片</b><small
+                      class="block text-[10px] text-gray-400 mt-0.5 whitespace-nowrap truncate">支持 jpg / png
+                      格式</small></span>
                 </button>
               </div>
 
               <!-- 自动抽帧 -->
               <div v-if="sourceMode === 'auto'" class="mb-3">
-                <button
-                  class="btn-primary w-full"
-                  :loading="frameLoading"
-                  :disabled="!videoPath"
-                  @click="refreshAutoFrame"
-                >
+                <button class="btn-primary w-full" :loading="frameLoading" :disabled="!videoPath"
+                  @click="refreshAutoFrame">
                   重新随机抽帧
                 </button>
                 <p v-if="!videoPath" class="text-xs text-gray-400 mt-2">
@@ -2018,18 +1945,9 @@ defineExpose({
 
               <!-- 时间轴选帧 -->
               <div v-if="sourceMode === 'timeline'" class="mb-3">
-                <video
-                  v-if="props.videoPath"
-                  ref="videoRef"
-                  :src="props.videoPath"
-                  preload="metadata"
-                  class="w-full rounded-lg bg-black max-h-[320px]"
-                  muted
-                  playsinline
-                  @loadedmetadata="onVideoLoadedMeta"
-                  @seeked="onVideoSeeked"
-                  @timeupdate="onVideoTimeUpdate"
-                ></video>
+                <video v-if="props.videoPath" ref="videoRef" :src="props.videoPath" preload="metadata"
+                  class="w-full rounded-lg bg-black max-h-[320px]" muted playsinline @loadedmetadata="onVideoLoadedMeta"
+                  @seeked="onVideoSeeked" @timeupdate="onVideoTimeUpdate"></video>
                 <!-- 时间轴选帧 -->
                 <div v-if="videoDuration > 0" class="mt-3 px-1">
                   <div class="flex items-center justify-between text-xs text-gray-300 mb-1.5">
@@ -2042,15 +1960,8 @@ defineExpose({
                       <span class="tabular-nums">{{ formatTime(props.videoDuration) }}</span>
                     </span>
                   </div>
-                  <input
-                    type="range"
-                    min="0"
-                    :max="videoDuration"
-                    step="0.05"
-                    :value="videoTime"
-                    class="timeline-slider w-full"
-                    @input="onTimelineChange($event.target.valueAsNumber)"
-                  />
+                  <input type="range" min="0" :max="videoDuration" step="0.05" :value="videoTime"
+                    class="timeline-slider w-full" @input="onTimelineChange($event.target.valueAsNumber)" />
                   <div class="flex justify-between text-[10px] text-gray-500 mt-1 tabular-nums">
                     <span>00:00</span>
                     <span>{{ formatTime(videoDuration / 4) }}</span>
@@ -2058,11 +1969,8 @@ defineExpose({
                     <span>{{ formatTime((videoDuration * 3) / 4) }}</span>
                     <span>{{ formatTime(videoDuration) }}</span>
                   </div>
-                  <button
-                    class="btn-ghost w-full mt-2 text-xs"
-                    :disabled="frameLoading"
-                    @click="captureFromTime(videoTime)"
-                  >
+                  <button class="btn-ghost w-full mt-2 text-xs" :disabled="frameLoading"
+                    @click="captureFromTime(videoTime)">
                     <span v-if="frameLoading">抽帧中…</span>
                     <span v-else>使用此帧作封面</span>
                   </button>
@@ -2074,36 +1982,17 @@ defineExpose({
 
               <!-- 上传图片 -->
               <div v-if="sourceMode === 'upload'" class="mb-3">
-                <a-upload-dragger
-                  :show-upload-list="false"
-                  :before-upload="onUploadImage"
-                  accept="image/jpeg,image/png"
-                  :multiple="false"
-                >
+                <a-upload-dragger :show-upload-list="false" :before-upload="onUploadImage" accept="image/jpeg,image/png"
+                  :multiple="false">
                   <div class="flex flex-col items-center justify-center gap-3 py-2">
                     <!-- 图标 -->
                     <div class="text-fuchsia-300">
-                      <svg
-                        viewBox="0 0 48 48"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-7 h-7"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M14 30a6 6 0 010-12 7 7 0 0113.7 1.5A5 5 0 0137 22a5 5 0 01-1 9.9"
-                          stroke="currentColor"
-                          stroke-width="2.2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path
-                          d="M24 22v12m0-12l-5 5m5-5l5 5"
-                          stroke="currentColor"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
+                      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7"
+                        aria-hidden="true">
+                        <path d="M14 30a6 6 0 010-12 7 7 0 0113.7 1.5A5 5 0 0137 22a5 5 0 01-1 9.9"
+                          stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M24 22v12m0-12l-5 5m5-5l5 5" stroke="currentColor" stroke-width="2.5"
+                          stroke-linecap="round" stroke-linejoin="round" />
                       </svg>
                     </div>
 
@@ -2125,14 +2014,8 @@ defineExpose({
                   <b class="text-white font-medium">{{ canvasW }} × {{ canvasH }}</b>
                 </div>
                 <div
-                  class="w-full aspect-video bg-[#1a1a2a] rounded-md overflow-hidden flex items-center justify-center"
-                >
-                  <img
-                    v-if="backgroundSrc"
-                    :src="backgroundSrc"
-                    alt="背景"
-                    class="h-full object-cover"
-                  />
+                  class="w-full aspect-video bg-[#1a1a2a] rounded-md overflow-hidden flex items-center justify-center">
+                  <img v-if="backgroundSrc" :src="backgroundSrc" alt="背景" class="h-full object-cover" />
                   <div v-else class="text-xs text-gray-500">暂无背景</div>
                 </div>
                 <p class="text-[11px] text-gray-500 text-center mt-2">画布尺寸跟随原图分辨率</p>
@@ -2142,9 +2025,7 @@ defineExpose({
 
           <a-tab-pane key="text" tab="文本图层">
             <div class="flex-1 overflow-y-auto pr-1 side-scroll cd-scroll">
-              <div
-                class="flex items-center justify-between gap-2.5 mb-3 pb-2.5 border-b border-white/10"
-              >
+              <div class="flex items-center justify-between gap-2.5 mb-3 pb-2.5 border-b border-white/10">
                 <div class="text-xs text-gray-300 flex-1 truncate">
                   {{
                     activeLayer
@@ -2155,15 +2036,11 @@ defineExpose({
                 <div class="flex gap-1.5">
                   <button
                     class="btn-ghost !text-[12px] !px-2.5 !py-1 bg-fuchsia-500/20 border-fuchsia-500/50 text-fuchsia-200"
-                    @click="addTextLayer"
-                  >
+                    @click="addTextLayer">
                     ＋ 新增文本
                   </button>
-                  <button
-                    class="btn-ghost !text-[12px] !px-2.5 !py-1 text-rose-300 border-rose-500/30"
-                    :disabled="!activeLayer"
-                    @click="removeSelectedLayer"
-                  >
+                  <button class="btn-ghost !text-[12px] !px-2.5 !py-1 text-rose-300 border-rose-500/30"
+                    :disabled="!activeLayer" @click="removeSelectedLayer">
                     🗑 删除
                   </button>
                 </div>
@@ -2171,13 +2048,9 @@ defineExpose({
 
               <!-- 选中图层的样式编辑器 -->
               <div v-if="activeLayer" class="bg-black/20 rounded-[10px] p-3">
-                <TextStyleEditor
-                  v-if="activeLayer"
-                  v-model="activeLayer.style"
-                  :text-bounds-hint="activeLayerTextBounds"
-                  :bg-max-size="bgMaxSize"
-                  @update:model-value="onStyleChange"
-                />
+                <TextStyleEditor v-if="activeLayer" v-model="activeLayer.style"
+                  :text-bounds-hint="activeLayerTextBounds" :bg-max-size="bgMaxSize"
+                  @update:model-value="onStyleChange" />
               </div>
               <div v-else class="text-xs text-gray-500 text-center p-6 bg-black/20 rounded-[10px]">
                 点击画布中的文字图层后，可在这里调整样式。
@@ -2189,14 +2062,8 @@ defineExpose({
             <!-- Tab：遮罩 -->
             <div class="flex-1 overflow-y-auto pr-1 side-scroll cd-scroll">
               <div class="flex items-center gap-2 mb-3">
-                <button
-                  type="button"
-                  class="cdm-toggle"
-                  :class="currentMask.enabled && 'cdm-toggle-on'"
-                  role="switch"
-                  :aria-checked="!!currentMask.enabled"
-                  @click="toggleMask(!currentMask.enabled)"
-                >
+                <button type="button" class="cdm-toggle" :class="currentMask.enabled && 'cdm-toggle-on'" role="switch"
+                  :aria-checked="!!currentMask.enabled" @click="toggleMask(!currentMask.enabled)">
                   <span class="cdm-toggle-knob"></span>
                 </button>
                 <span class="text-[13px] text-gray-300">启用遮罩</span>
@@ -2208,11 +2075,8 @@ defineExpose({
                     <div class="cdm-field">
                       <span class="cdm-field-label">颜色</span>
                       <div class="flex items-center gap-1.5 flex-1">
-                        <input
-                          v-model="currentMask.color"
-                          type="color"
-                          class="w-[30px] h-6 rounded cursor-pointer bg-transparent border border-white/15"
-                        />
+                        <input v-model="currentMask.color" type="color"
+                          class="w-[30px] h-6 rounded cursor-pointer bg-transparent border border-white/15" />
                         <input v-model="currentMask.color" type="text" class="cdm-input flex-1" />
                       </div>
                     </div>
@@ -2221,14 +2085,8 @@ defineExpose({
                     <div class="cdm-field">
                       <span class="cdm-field-label">圆角</span>
                       <div class="flex items-center gap-1.5 flex-1">
-                        <input
-                          v-model.number="currentMask.radius"
-                          type="range"
-                          min="0"
-                          max="200"
-                          step="1"
-                          class="ts-slider flex-1"
-                        />
+                        <input v-model.number="currentMask.radius" type="range" min="0" max="200" step="1"
+                          class="ts-slider flex-1" />
                         <span class="cdm-val">{{ currentMask.radius }}</span>
                       </div>
                     </div>
@@ -2238,27 +2096,16 @@ defineExpose({
                 <div class="cdm-field mt-1">
                   <span class="cdm-field-label">透明度</span>
                   <div class="flex items-center gap-1.5 flex-1">
-                    <input
-                      v-model.number="currentMask.opacity"
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.05"
-                      class="ts-slider flex-1"
-                    />
+                    <input v-model.number="currentMask.opacity" type="range" min="0" max="1" step="0.05"
+                      class="ts-slider flex-1" />
                     <span class="cdm-val">{{ Math.round(currentMask.opacity * 100) }}%</span>
                   </div>
                 </div>
 
                 <div class="flex items-center gap-2 mb-3 mt-2">
-                  <button
-                    type="button"
-                    class="cdm-toggle"
-                    :class="currentMask.stroke.enabled && 'cdm-toggle-on'"
-                    role="switch"
-                    :aria-checked="!!currentMask.stroke.enabled"
-                    @click="currentMask.stroke.enabled = !currentMask.stroke.enabled"
-                  >
+                  <button type="button" class="cdm-toggle" :class="currentMask.stroke.enabled && 'cdm-toggle-on'"
+                    role="switch" :aria-checked="!!currentMask.stroke.enabled"
+                    @click="currentMask.stroke.enabled = !currentMask.stroke.enabled">
                     <span class="cdm-toggle-knob"></span>
                   </button>
                   <span class="text-[13px] text-gray-300">描边</span>
@@ -2269,16 +2116,9 @@ defineExpose({
                       <div class="cdm-field">
                         <span class="cdm-field-label">颜色</span>
                         <div class="flex items-center gap-1.5 flex-1">
-                          <input
-                            v-model="currentMask.stroke.color"
-                            type="color"
-                            class="w-[30px] h-6 rounded cursor-pointer bg-transparent border border-white/15"
-                          />
-                          <input
-                            v-model="currentMask.stroke.color"
-                            type="text"
-                            class="cdm-input flex-1"
-                          />
+                          <input v-model="currentMask.stroke.color" type="color"
+                            class="w-[30px] h-6 rounded cursor-pointer bg-transparent border border-white/15" />
+                          <input v-model="currentMask.stroke.color" type="text" class="cdm-input flex-1" />
                         </div>
                       </div>
                     </div>
@@ -2286,14 +2126,8 @@ defineExpose({
                       <div class="cdm-field">
                         <span class="cdm-field-label">粗细</span>
                         <div class="flex items-center gap-1.5 flex-1">
-                          <input
-                            v-model.number="currentMask.stroke.width"
-                            type="range"
-                            min="0"
-                            max="30"
-                            step="0.5"
-                            class="ts-slider flex-1"
-                          />
+                          <input v-model.number="currentMask.stroke.width" type="range" min="0" max="30" step="0.5"
+                            class="ts-slider flex-1" />
                           <span class="cdm-val">{{ currentMask.stroke.width }}</span>
                         </div>
                       </div>
@@ -2303,58 +2137,43 @@ defineExpose({
 
                 <!-- 渐变控制 -->
                 <div class="flex items-center gap-2 mb-3 mt-2">
-                  <button
-                    type="button"
-                    class="cdm-toggle"
-                    :class="currentMask.fillLinearGradientColorStops && 'cdm-toggle-on'"
-                    role="switch"
-                    :aria-checked="!!currentMask.fillLinearGradientColorStops"
-                    @click="
+                  <button type="button" class="cdm-toggle"
+                    :class="currentMask.fillLinearGradientColorStops && 'cdm-toggle-on'" role="switch"
+                    :aria-checked="!!currentMask.fillLinearGradientColorStops" @click="
                       currentMask.fillLinearGradientColorStops =
-                        currentMask.fillLinearGradientColorStops
-                          ? null
-                          : [0, '#d946ef', 1, '#000000']
-                    "
-                  >
+                      currentMask.fillLinearGradientColorStops
+                        ? null
+                        : [0, '#d946ef', 1, '#000000']
+                      ">
                     <span class="cdm-toggle-knob"></span>
                   </button>
                   <span class="text-[13px] text-gray-300">渐变填充</span>
                 </div>
                 <div v-if="currentMask.fillLinearGradientColorStops">
                   <div class="flex gap-1.5 mb-3">
-                    <button
-                      title="从上到下"
+                    <button title="从上到下"
                       class="bg-white/10 hover:bg-white/20 text-gray-200 px-2.5 py-1.5 rounded-md text-xs transition"
-                      @click="setGradientDirection('tb')"
-                    >
+                      @click="setGradientDirection('tb')">
                       ⬇️
                     </button>
-                    <button
-                      title="从下到上"
+                    <button title="从下到上"
                       class="bg-white/10 hover:bg-white/20 text-gray-200 px-2.5 py-1.5 rounded-md text-xs transition"
-                      @click="setGradientDirection('bt')"
-                    >
+                      @click="setGradientDirection('bt')">
                       ⬆️
                     </button>
-                    <button
-                      title="从左到右"
+                    <button title="从左到右"
                       class="bg-white/10 hover:bg-white/20 text-gray-200 px-2.5 py-1.5 rounded-md text-xs transition"
-                      @click="setGradientDirection('lr')"
-                    >
+                      @click="setGradientDirection('lr')">
                       ➡️
                     </button>
-                    <button
-                      title="从右到左"
+                    <button title="从右到左"
                       class="bg-white/10 hover:bg-white/20 text-gray-200 px-2.5 py-1.5 rounded-md text-xs transition"
-                      @click="setGradientDirection('rl')"
-                    >
+                      @click="setGradientDirection('rl')">
                       ⬅️
                     </button>
-                    <button
-                      title="反转颜色"
+                    <button title="反转颜色"
                       class="bg-white/10 hover:bg-white/20 text-gray-200 px-2.5 py-1.5 rounded-md text-xs transition"
-                      @click="reverseGradientColors"
-                    >
+                      @click="reverseGradientColors">
                       🔄 反转
                     </button>
                   </div>
@@ -2362,25 +2181,16 @@ defineExpose({
                     <div class="col-span-3 text-xs text-gray-400">起点</div>
                     <div class="col-span-5">
                       <div class="flex items-center gap-1.5">
-                        <input
-                          v-model="maskGradient.color1"
-                          type="color"
-                          class="w-[30px] h-6 rounded cursor-pointer bg-transparent border border-white/15"
-                        />
+                        <input v-model="maskGradient.color1" type="color"
+                          class="w-[30px] h-6 rounded cursor-pointer bg-transparent border border-white/15" />
                         <input v-model="maskGradient.color1" type="text" class="cdm-input flex-1" />
                       </div>
                     </div>
                     <div class="col-span-4">
                       <div class="flex items-center gap-1.5">
                         <span class="text-xs text-gray-400">透明度</span>
-                        <input
-                          v-model.number="maskGradient.alpha1"
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.05"
-                          class="ts-slider flex-1"
-                        />
+                        <input v-model.number="maskGradient.alpha1" type="range" min="0" max="1" step="0.05"
+                          class="ts-slider flex-1" />
                       </div>
                     </div>
                   </div>
@@ -2388,25 +2198,16 @@ defineExpose({
                     <div class="col-span-3 text-xs text-gray-400">终点</div>
                     <div class="col-span-5">
                       <div class="flex items-center gap-1.5">
-                        <input
-                          v-model="maskGradient.color2"
-                          type="color"
-                          class="w-[30px] h-6 rounded cursor-pointer bg-transparent border border-white/15"
-                        />
+                        <input v-model="maskGradient.color2" type="color"
+                          class="w-[30px] h-6 rounded cursor-pointer bg-transparent border border-white/15" />
                         <input v-model="maskGradient.color2" type="text" class="cdm-input flex-1" />
                       </div>
                     </div>
                     <div class="col-span-4">
                       <div class="flex items-center gap-1.5">
                         <span class="text-xs text-gray-400">透明度</span>
-                        <input
-                          v-model.number="maskGradient.alpha2"
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.05"
-                          class="ts-slider flex-1"
-                        />
+                        <input v-model.number="maskGradient.alpha2" type="range" min="0" max="1" step="0.05"
+                          class="ts-slider flex-1" />
                       </div>
                     </div>
                   </div>
@@ -2468,16 +2269,12 @@ defineExpose({
   display: flex;
   width: 100%;
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       color-mix(in srgb, var(--theme-background-light) 92%, transparent),
-      color-mix(in srgb, var(--theme-background-card) 78%, transparent)
-    ),
-    radial-gradient(
-      circle at 30% 0,
+      color-mix(in srgb, var(--theme-background-card) 78%, transparent)),
+    radial-gradient(circle at 30% 0,
       color-mix(in srgb, var(--theme-primary-light) 22%, transparent),
-      transparent 32%
-    );
+      transparent 32%);
 }
 
 .cd-container,
@@ -2494,11 +2291,9 @@ defineExpose({
   border-radius: 18px;
   border: 1px solid color-mix(in srgb, var(--theme-border-gray) 18%, transparent);
   background:
-    radial-gradient(
-      circle at 18% 0,
+    radial-gradient(circle at 18% 0,
       color-mix(in srgb, var(--theme-primary-light) 18%, transparent),
-      transparent 28%
-    ),
+      transparent 28%),
     color-mix(in srgb, var(--theme-background-light) 58%, transparent);
   box-shadow:
     inset 0 1px 0 var(--theme-overlay-light),
@@ -2566,11 +2361,9 @@ defineExpose({
   justify-content: center;
   padding: 18px;
   background:
-    radial-gradient(
-      circle at 50% 12%,
+    radial-gradient(circle at 50% 12%,
       color-mix(in srgb, var(--theme-primary-light) 16%, transparent),
-      transparent 34%
-    ),
+      transparent 34%),
     color-mix(in srgb, var(--theme-background) 46%, transparent);
   overflow: hidden;
 }
@@ -2585,6 +2378,12 @@ defineExpose({
   gap: 7px;
   border-top: 1px solid color-mix(in srgb, var(--theme-border-gray) 14%, transparent);
   background: color-mix(in srgb, var(--theme-background-light) 70%, transparent);
+}
+
+.cd-preview-actions {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .cd-tabs {
@@ -2602,6 +2401,42 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: flex-end;
+}
+
+.cd-preview-tip {
+  width: 100%;
+  font-size: var(--app-font-size-micro);
+  font-weight: 500;
+  line-height: 1.2;
+  color:
+    color-mix(in srgb, var(--theme-border-gray) 54%, transparent);
+  white-space: nowrap;
+}
+
+.cd-footer .ant-btn,
+.cd-preview-footer .ant-btn {
+  color:
+    color-mix(in srgb, var(--theme-text-secondary) 86%, transparent);
+  background:
+    color-mix(in srgb, var(--theme-background-light) 76%, transparent);
+  border-color:
+    color-mix(in srgb, var(--theme-border-gray) 24%, transparent);
+}
+
+.cd-footer .ant-btn:disabled,
+.cd-preview-footer .ant-btn:disabled {
+  color:
+    color-mix(in srgb, var(--theme-text-muted) 38%, transparent);
+  background:
+    color-mix(in srgb, var(--theme-background-light) 46%, transparent);
+  border-color:
+    color-mix(in srgb, var(--theme-border-gray) 12%, transparent);
+}
+
+.cd-preview-footer .ant-btn-dangerous:not(:disabled) {
+  color: var(--theme-error-light);
+  border-color:
+    color-mix(in srgb, var(--theme-error-light) 35%, transparent);
 }
 </style>
 
@@ -2824,11 +2659,9 @@ defineExpose({
 }
 
 .cd-tabs .ant-tabs-tab-active {
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--theme-primary-light) 96%, transparent),
-    color-mix(in srgb, var(--theme-info) 86%, transparent)
-  ) !important;
+  background: linear-gradient(135deg,
+      color-mix(in srgb, var(--theme-primary-light) 96%, transparent),
+      color-mix(in srgb, var(--theme-info) 86%, transparent)) !important;
   border-color: transparent !important;
   box-shadow: 0 8px 18px color-mix(in srgb, var(--theme-primary) 22%, transparent);
 }
@@ -2852,5 +2685,15 @@ defineExpose({
 
 .cd-tabs .ant-tabs-ink-bar {
   visibility: hidden;
+}
+
+
+
+.title-cover-step .ant-input, .title-cover-step .ant-input-affix-wrapper, .title-cover-step .ant-select-selector, .title-cover-step textarea.ant-input {
+    color: var(--theme-text-secondary) !important;
+    background:
+color-mix(in srgb, var(--theme-background-light) 66%, transparent) !important;
+    border-color:
+color-mix(in srgb, var(--theme-info) 16%, transparent) !important;
 }
 </style>

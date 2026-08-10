@@ -133,6 +133,8 @@ const generatedVideoName = computed(() => {
 // 生成视频（主入口）
 const handleGenerate = async () => {
   if (!checkFullPermission('视频生成')) return
+
+
   if (!canGenerate.value) {
     message.warning('请完善数字人形象和驱动音频')
     return

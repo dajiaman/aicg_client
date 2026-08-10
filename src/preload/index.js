@@ -903,7 +903,6 @@ const api = {
     },
     onStreamChunk: (callback) => {
       const handler = (_, data) => {
-        console.log('stream-chunk:', data)
         callback(data)
       }
       ipcRenderer.on('llm:stream-chunk', handler)

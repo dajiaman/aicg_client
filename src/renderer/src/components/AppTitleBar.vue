@@ -114,6 +114,9 @@
         </button>
       </div>
     </div>
+
+
+
   </div>
 </template>
 
@@ -138,6 +141,7 @@ import {
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
+import { Modal } from 'ant-design-vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -193,7 +197,15 @@ const handleUnmaximizeWindow = async () => {
  * 窗口关闭（window-close）
  */
 const handleCloseWindow = async () => {
-  await window.api.window.close()
+  Modal.confirm({
+    title: '确认关闭',
+    content: '确认要关闭应用程序吗？',
+    okText: '确认',
+    okType: 'danger',
+    onOk: async () => {
+      await window.api.window.close()
+    }
+  })
 }
 
 /**
@@ -210,6 +222,9 @@ const navItemClick = (path) => {
  * 退出登录
  */
 const handleLogout = async () => {
+
+
+
   try {
     await authStore.logout()
     router.push('/login')

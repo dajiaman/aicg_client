@@ -784,15 +784,20 @@ const onTimelineChange = (time) => {
  * 按指定秒数抽帧作封面：调用主进程 ffmpeg 抽帧 + loadBackground
  */
 const captureFromTime = async (time) => {
+  console.log('props.videoPath:', props.videoPath)
+  const videoPath = props.videoPath
   if (!videoPath) {
     console.error('视频路径不能为空')
     return
   }
+
   frameLoading.value = true
   try {
-    const outputPath = await getFrameOutputPath()
     // 按指定时间抽帧作封面
-    const result = await window.api.cover.extractFrame(videoPath, outputPath, time)
+    const result = await window.api.cover.extractFrame({
+      videoPath: videoPath,
+      time: time
+    })
     console.log('extractFrame result:', result)
     if (result?.success) {
       await loadBackgroundImage(result.data.framePath)
@@ -1717,7 +1722,9 @@ watch(
   () => props.videoPath,
   (newPath, oldPath) => {
     if (newPath !== oldPath && newPath !== '') {
-      refreshAutoFrame()
+      setTimeout(() => {
+        refreshAutoFrame()
+      }, 1000)
     }
   },
   { immediate: true }
@@ -1955,7 +1962,7 @@ defineExpose({
                     <span class="text-gray-400">
                       <b class="text-white font-medium tabular-nums">{{
                         formatTime(props.videoTime)
-                      }}</b>
+                        }}</b>
                       <span class="mx-1">/</span>
                       <span class="tabular-nums">{{ formatTime(props.videoDuration) }}</span>
                     </span>
@@ -2408,35 +2415,27 @@ defineExpose({
   font-size: var(--app-font-size-micro);
   font-weight: 500;
   line-height: 1.2;
-  color:
-    color-mix(in srgb, var(--theme-border-gray) 54%, transparent);
+  color: color-mix(in srgb, var(--theme-border-gray) 54%, transparent);
   white-space: nowrap;
 }
 
 .cd-footer .ant-btn,
 .cd-preview-footer .ant-btn {
-  color:
-    color-mix(in srgb, var(--theme-text-secondary) 86%, transparent);
-  background:
-    color-mix(in srgb, var(--theme-background-light) 76%, transparent);
-  border-color:
-    color-mix(in srgb, var(--theme-border-gray) 24%, transparent);
+  color: color-mix(in srgb, var(--theme-text-secondary) 86%, transparent);
+  background: color-mix(in srgb, var(--theme-background-light) 76%, transparent);
+  border-color: color-mix(in srgb, var(--theme-border-gray) 24%, transparent);
 }
 
 .cd-footer .ant-btn:disabled,
 .cd-preview-footer .ant-btn:disabled {
-  color:
-    color-mix(in srgb, var(--theme-text-muted) 38%, transparent);
-  background:
-    color-mix(in srgb, var(--theme-background-light) 46%, transparent);
-  border-color:
-    color-mix(in srgb, var(--theme-border-gray) 12%, transparent);
+  color: color-mix(in srgb, var(--theme-text-muted) 38%, transparent);
+  background: color-mix(in srgb, var(--theme-background-light) 46%, transparent);
+  border-color: color-mix(in srgb, var(--theme-border-gray) 12%, transparent);
 }
 
 .cd-preview-footer .ant-btn-dangerous:not(:disabled) {
   color: var(--theme-error-light);
-  border-color:
-    color-mix(in srgb, var(--theme-error-light) 35%, transparent);
+  border-color: color-mix(in srgb, var(--theme-error-light) 35%, transparent);
 }
 </style>
 
@@ -2687,13 +2686,12 @@ defineExpose({
   visibility: hidden;
 }
 
-
-
-.title-cover-step .ant-input, .title-cover-step .ant-input-affix-wrapper, .title-cover-step .ant-select-selector, .title-cover-step textarea.ant-input {
-    color: var(--theme-text-secondary) !important;
-    background:
-color-mix(in srgb, var(--theme-background-light) 66%, transparent) !important;
-    border-color:
-color-mix(in srgb, var(--theme-info) 16%, transparent) !important;
+.title-cover-step .ant-input,
+.title-cover-step .ant-input-affix-wrapper,
+.title-cover-step .ant-select-selector,
+.title-cover-step textarea.ant-input {
+  color: var(--theme-text-secondary) !important;
+  background: color-mix(in srgb, var(--theme-background-light) 66%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-info) 16%, transparent) !important;
 }
 </style>

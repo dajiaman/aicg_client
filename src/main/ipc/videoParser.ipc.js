@@ -222,6 +222,12 @@ export function registerVideoParserIpc(ipcMain) {
   ipcMain.handle('video-parser:parse-and-extract', async (_, url) => {
     logger.info(`[video-parser:parse-and-extract] ${url}`)
 
+    // 检测 asr 服务是否存在
+    const modulePath = path.join(getAppRootPath(), 'python-modules', 'asrModule', 'app.exe')
+    if (!fs.existsSync(modulePath)) {
+      return { success: false, error: 'ASR 服务不存在，请先检查python_modules 是否存在' }
+    }
+
     // 判断平台
     const platform = detectPlatform(url)
     if (!platform) {

@@ -1,7 +1,7 @@
 <script setup>
 import { usePipeline } from '../../../hooks/usePipeline'
 
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import ModuleNav from '../../../components/studio/ModuleNav.vue'
 import SourcePanel from '../../../components/studio/SourcePanel.vue'
@@ -47,6 +47,7 @@ const {
   soundEffectSummary,
   subtitleSummary,
   titleSummary,
+  previewVideoName,
 
   // 方法
   selectSourceVideo,
@@ -768,6 +769,13 @@ const handleUpdatePreviewMode = (newMode) => {
   console.log('更新预览模式:', newMode)
   previewMode.value = newMode
 }
+
+
+onMounted(() => {
+  if (pipeline.previewVideoPath) {
+    previewMode.value = 'rendered'
+  }
+})
 </script>
 
 <template>
@@ -834,14 +842,14 @@ const handleUpdatePreviewMode = (newMode) => {
 
       <PreviewStage :source-video-src="displayVideoSrc" :preview-video-path="previewVideoPath"
         :preview-mode="previewMode" :preview-frame-src="previewFrameSrc" :preview-frame-loading="previewFrameLoading"
-        :rendered-dirty="renderedDirty" :video-name="displayVideoName" :subtitle="config.subtitle" :title="config.title"
+        :rendered-dirty="renderedDirty" :video-name="previewVideoName" :subtitle="config.subtitle" :title="config.title"
         :namecard="config.namecard" @open-file="handleOpenFileInFolder" @export-file="handleExportVideo"
         @update-preview-mode="handleUpdatePreviewMode" @update-title-offset="handleTitleOffsetUpdate"
         @update-namecard-position="handleNamecardPositionUpdate" :data-preview-frame-src="previewFrameSrc"
         :data-source-video-src="displayVideoSrc" />
     </div>
 
-    <BenchmarkProgress :loading="loading" :text="progressText"/>
+    <BenchmarkProgress :loading="loading" :text="progressText" />
 
     <!-- ===== 字幕设置弹窗 ===== -->
     <SubtitleSettingsModal v-model:open="showSubtitleModal" :initial-config="config.subtitle.customConfig"

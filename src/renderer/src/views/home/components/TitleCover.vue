@@ -237,6 +237,14 @@ defineExpose({
     transform: translateX(3px);
   }
 }
+
+
+.source-change-action {
+  flex-shrink: 0;
+  height: 24px;
+  padding: 0 10px;
+  font-size: var(--app-font-size-caption);
+}
 </style>
 
 <template>
@@ -261,9 +269,7 @@ defineExpose({
               <FileTextOutlined />
               {{ aiGenerating ? '生成中' : '一键生成' }}
             </button>
-            <button class="ghost-action compact" @click="handleOpenCover"
-            :disabled="!coverPath"
-            >打开封面</button>
+            <button class="ghost-action compact" @click="handleOpenCover" :disabled="!coverPath">打开封面</button>
             <button class="ghost-action compact" @click="handleExportCover" :disabled="aiGenerating">
               <ExportOutlined />
               生成并导出封面
@@ -278,7 +284,7 @@ defineExpose({
         <!-- 主内容：封面设计器 -->
         <CoverDesignerModal :ref="designerRef" :video-path="designerVideoPath" :title="publishTitle"
           :titleMain="coverTitleMain" :titleSub="coverTitleSub" :initial-config="designerConfig"
-          @confirm="onDesignerConfirm" @dirty-change="handleDesignerDirtyChange" />
+          @confirm="onDesignerConfirm" @dirty-change="handleDesignerDirtyChange" :data-video-path="designerVideoPath" />
       </div>
     </div>
 

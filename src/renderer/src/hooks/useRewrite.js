@@ -70,7 +70,6 @@ export function useRewrite() {
       return { success: false, error: '未选择模板' }
     }
 
-
     loading.value = true
     progressText.value = 'AI正在处理文案...'
     try {
@@ -79,6 +78,8 @@ export function useRewrite() {
       const { wordCountLimit } = options
 
       let prompt = buildPrompt(template, original, wordCountLimit)
+
+      const aiConfig = await getAIConfig()
 
       // 流式调用
       const requestId = 'rewrite_' + Date.now()
@@ -127,6 +128,7 @@ export function useRewrite() {
         throw new Error(result.error || '改写失败')
       }
     } catch (e) {
+      console.error('改写失败', e)
       message.error('改写失败：' + e.message)
       return { success: false, error: e.message }
     } finally {

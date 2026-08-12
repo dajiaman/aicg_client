@@ -175,7 +175,7 @@ app.whenReady().then(() => {
   createWindow()
 
   if (is.dev) {
-    // createWindow2()
+    createWindow2()
   }
 
   app.on('activate', function () {

@@ -115,14 +115,18 @@ export function useTitleCover() {
       coverPath.value = pl.coverUrl
     }
 
-    if (pl.sourceVideoPath) {
-      designerVideoPath.value = pl.sourceVideoPath
-      sourceVideoName.value = getFileNameFromPath(pl.sourceVideoPath)
-      designerVideoSrc.value = normalizeUrl(pl.sourceVideoPath)
+    if (pl.previewVideoPath) {
+      designerVideoPath.value = pl.previewVideoPath
+      sourceVideoName.value = getFileNameFromPath(pl.previewVideoPath)
+      designerVideoSrc.value = normalizeUrl(pl.previewVideoPath)
     } else if (pl.generatedVideoPath) {
       designerVideoPath.value = pl.generatedVideoPath
       sourceVideoName.value = getFileNameFromPath(pl.generatedVideoPath)
       designerVideoSrc.value = normalizeUrl(pl.generatedVideoPath)
+    } else if (pl.sourceVideoPath) {
+      designerVideoPath.value = pl.sourceVideoPath
+      sourceVideoName.value = getFileNameFromPath(pl.sourceVideoPath)
+      designerVideoSrc.value = normalizeUrl(pl.sourceVideoPath)
     }
 
     // 从 pipeline 恢复封面设计器配置

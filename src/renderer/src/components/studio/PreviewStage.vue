@@ -9,7 +9,7 @@
       <div class="preview-actions">
         <!-- 模式切换 -->
         <a-segmented :value="previewMode" :options="modeOptions" size="small" @change="handlePreviewModeChange"
-          v-if="previewMode === 'rendered'" />
+          v-if="previewVideoPath" />
 
         <!-- 操作按钮（仅成片模式） -->
         <template v-if="showRenderedPreview">

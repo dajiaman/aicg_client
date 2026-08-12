@@ -1,16 +1,14 @@
 /**
  * 微信视频号平台登录实现
  */
+import logger from '../log/index.js'
 
-import { getChromeExecutablePath, launchBrowserWithCookies } from '../publish/utils.js'
-import logger from '../log'
-
-export class WechatVideoPlatform {
+export class WxchannelsPlatform {
   name = '微信视频号'
-  key = 'wechat_video'
+  key = 'wx_channels'
 
   config = {
-    loginUrl: 'https://channels.weixin.qq.com/platform',
+    loginUrl: 'https://channels.weixin.qq.com/login.html',
     successUrlIncludes: ['channels.weixin.qq.com/platform'],
     keyCookies: ['sessionid', 'wxuin'],
     nicknameSelectors: ['.account-info .name', '.finder-nickname', '.nickname'],
@@ -69,6 +67,9 @@ export class WechatVideoPlatform {
     return (hasKeyCookies && urlMatched) || (loginBoxGone && hasLoggedInElements)
   }
 
+  /**
+   * 验证 Cookie 是否有效
+   */
   async validateCookie(context, page) {
     await page.goto(this.config.loginUrl, { waitUntil: 'networkidle', timeout: 30000 })
     await page.waitForTimeout(2000)
@@ -136,24 +137,14 @@ export class WechatVideoPlatform {
    * @param {*} onProgress
    * @returns
    */
-  async login(options = {}, onProgress = () => {}) {
-    const { chromium } = await import('playwright')
-
-    onProgress('正在启动浏览器...')
-    const browser = await chromium.launch({
-      headless: options.headless || false,
-      args: ['--start-maximized', '--disable-blink-features=AutomationControlled'],
-      executablePath: getChromeExecutablePath()
-    })
-
+  async login(context, browser) {
     try {
-      const context = await browser.newContext({ viewport: null })
       const page = await context.newPage()
 
-      onProgress(`正在打开${this.name}登录页，请在浏览器中扫码/登录...`)
+      logger.info(`正在打开${this.name}登录页，请在浏览器中扫码/登录...`)
       await page.goto(this.config.loginUrl, { waitUntil: 'domcontentloaded', timeout: 60000 })
 
-      const timeoutMs = 5 * 60 * 1000
+      const timeoutMs = 2 * 60 * 1000
       const start = Date.now()
       let loggedIn = false
 
@@ -170,7 +161,7 @@ export class WechatVideoPlatform {
         throw new Error('登录超时，请重试')
       }
 
-      onProgress('登录成功，正在获取账号信息...')
+      logger.info('登录成功，正在获取账号信息...')
       await page.waitForTimeout(1200)
 
       const cookies = await context.cookies()
@@ -226,18 +217,54 @@ export class WechatVideoPlatform {
    * 测试登录
    * @param {*} options
    */
-  async openAccount(platform, cookieStr) {
+  async openAccount(context, browser) {
     try {
-      const { context } = await launchBrowserWithCookies(platform, cookieStr)
-
       const page = await context.newPage()
-      await page.goto('https://channels.weixin.qq.com/', {
+      await page.goto('https://channels.weixin.qq.com/platform', {
         waitUntil: 'domcontentloaded',
         timeout: 90000
       })
 
       return {
         success: true
+      }
+    } catch (error) {
+      logger.error('testLogin', error)
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
+
+  /**
+   * 测试登录
+   * @param {*} options
+   */
+  async testLogin(context, browser) {
+    try {
+      const page = await context.newPage()
+      await page.goto('https://channels.weixin.qq.com/platform', {
+        waitUntil: 'domcontentloaded',
+        timeout: 90000
+      })
+
+      const timeoutMs = 2 * 60 * 1000
+      const start = Date.now()
+      let loggedIn = false
+
+      while (Date.now() - start < timeoutMs) {
+        if (browser.isConnected() === false) {
+          return { success: false, message: '浏览器已关闭' }
+        }
+        loggedIn = await this.detectLogin(page, context)
+        if (loggedIn) break
+        await page.waitForTimeout(1500)
+      }
+
+      return {
+        success: true,
+        loggedIn: loggedIn
       }
     } catch (error) {
       console.error('testLogin', error)
@@ -249,4 +276,4 @@ export class WechatVideoPlatform {
   }
 }
 
-export default new WechatVideoPlatform()
+export default new WxchannelsPlatform()

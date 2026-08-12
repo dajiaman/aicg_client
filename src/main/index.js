@@ -12,6 +12,28 @@ import { getMachineId } from 'native-machine-id'
 import { models } from './database/services'
 
 logger.info('=== app starting ===')
+
+// ===== 单例锁:防止多开 =====
+// 拿到锁才继续往下走,否则直接退出
+const gotLock = app.requestSingleInstanceLock()
+if (!gotLock) {
+  logger.warn('another instance already running, quitting')
+  app.quit()
+  process.exit(0)
+}
+
+// 监听第二个实例的启动事件(原实例收到通知,激活窗口)
+app.on('second-instance', (_event, argv, _workingDir) => {
+  logger.info(`second instance detected, argv: ${argv.join(' ')}`)
+  const allWindows = BrowserWindow.getAllWindows()
+  if (allWindows.length > 0) {
+    const win = allWindows[0]
+    if (win.isMinimized()) win.restore()
+    if (!win.isVisible()) win.show()
+    win.focus()
+  }
+})
+
 logger.info('=== init directory ===')
 ensureDir(path.join(getAppRootPath(), 'temp'))
 ensureDir(path.join(getAppRootPath(), 'outputs'))
@@ -151,7 +173,10 @@ app.whenReady().then(() => {
   registerAllIpc(ipcMain)
 
   createWindow()
-  // createWindow2()
+
+  if (is.dev) {
+    // createWindow2()
+  }
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
@@ -165,5 +190,3 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
-
-

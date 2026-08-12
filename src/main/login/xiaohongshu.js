@@ -1,9 +1,7 @@
 /**
  * 小红书平台登录实现
  */
-
-import { getChromeExecutablePath, launchBrowserWithCookies } from '../publish/utils.js'
-import logger from '../log'
+import logger from '../log/index.js'
 
 export class XiaohongshuPlatform {
   name = '小红书'
@@ -11,10 +9,10 @@ export class XiaohongshuPlatform {
 
   config = {
     loginUrl: 'https://creator.xiaohongshu.com/login',
-    successUrlIncludes: ['creator.xiaohongshu.com'],
+    successUrlIncludes: ['creator.xiaohongshu.com/new/home'],
     keyCookies: ['web_session', 'a1', 'gid'],
     nicknameSelectors: ['.name-box'],
-    loginBoxSelector: "div[class*='login-box']",
+    loginBoxSelector: "div[class*='login-box-container']",
     validation: {
       verifyUrl: 'https://creator.xiaohongshu.com/publish/publish?from=homepage&target=video',
       loggedInSelectors: [
@@ -23,7 +21,7 @@ export class XiaohongshuPlatform {
         'button:has-text("发布")',
         'div[class*="cover"]'
       ],
-      notLoggedInSelectors: ["div[class*='login-box']", 'button:has-text("登录")']
+      notLoggedInSelectors: ["div[class*='login-box-container']", 'button:has-text("登录")']
     }
   }
 
@@ -31,9 +29,11 @@ export class XiaohongshuPlatform {
    * 检测是否已登录
    */
   async detectLogin(page) {
+    logger.info(`[xiaohongshu] 开始检测登录状态`)
     // 1. 如果是登录页，直接返回 false
     const loginUrl = page.url()
     if (loginUrl.includes('/login')) {
+      logger.info(`[xiaohongshu] 当前页面是登录页，直接返回 false`)
       return false
     }
 
@@ -125,24 +125,14 @@ export class XiaohongshuPlatform {
   /**
    * 打开浏览器让用户登录
    */
-  async login(options = {}, onProgress = () => {}) {
-    const { chromium } = await import('playwright')
-
-    onProgress('正在启动浏览器...')
-    const browser = await chromium.launch({
-      headless: options.headless || false,
-      args: ['--start-maximized', '--disable-blink-features=AutomationControlled'],
-      executablePath: getChromeExecutablePath()
-    })
-
+  async login(context, browser) {
     try {
-      const context = await browser.newContext({ viewport: null })
       const page = await context.newPage()
 
-      onProgress(`正在打开${this.name}登录页，请在浏览器中扫码/登录...`)
+      logger.info(`正在打开${this.name}登录页，请在浏览器中扫码/登录...`)
       await page.goto(this.config.loginUrl, { waitUntil: 'domcontentloaded', timeout: 60000 })
 
-      const timeoutMs = 5 * 60 * 1000
+      const timeoutMs = 2 * 60 * 1000
       const start = Date.now()
       let loggedIn = false
 
@@ -163,7 +153,7 @@ export class XiaohongshuPlatform {
         throw new Error('登录超时，请重试')
       }
 
-      onProgress('登录成功，正在获取账号信息...')
+      logger.info('登录成功，正在获取账号信息...')
       await page.waitForTimeout(1200)
 
       const cookies = await context.cookies()
@@ -209,17 +199,53 @@ export class XiaohongshuPlatform {
   }
 
   /**
+   * 测试登录
+   * @param {*} options
+   */
+  async testLogin(context, browser) {
+    try {
+      const page = await context.newPage()
+      await page.goto('https://creator.xiaohongshu.com/new/home', {
+        waitUntil: 'domcontentloaded',
+        timeout: 90000
+      })
+
+      const timeoutMs = 5 * 60 * 1000
+      const start = Date.now()
+      let loggedIn = false
+
+      while (Date.now() - start < timeoutMs) {
+        if (browser.isConnected() === false) {
+          return { success: false, message: '浏览器已关闭' }
+        }
+        loggedIn = await this.detectLogin(page, context)
+        if (loggedIn) break
+        await page.waitForTimeout(1500)
+      }
+
+      return {
+        success: true,
+        loggedIn: loggedIn
+      }
+    } catch (error) {
+      console.error('testLogin', error)
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
+
+  /**
    *
    * @param {*} platform
    * @param {*} cookieStr
    * @returns
    */
-  async openAccount(platform, cookieStr) {
+  async openAccount(context, browser) {
     try {
-      const { context } = await launchBrowserWithCookies(platform, cookieStr)
-
       const page = await context.newPage()
-      await page.goto('https://creator.xiaohongshu.com', {
+      await page.goto('https://creator.xiaohongshu.com/new/home', {
         waitUntil: 'domcontentloaded',
         timeout: 90000
       })
@@ -228,7 +254,7 @@ export class XiaohongshuPlatform {
         success: true
       }
     } catch (error) {
-      console.error('testLogin', error)
+      logger.error('testLogin', error)
       return {
         success: false,
         message: error.message

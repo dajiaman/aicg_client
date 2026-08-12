@@ -181,7 +181,14 @@ async function remove(a) {
 const testConnection = async (a) => {
   try {
     testConnectionLoading.value = true
-    await window.api.account.testLogin(a.id)
+    const testRes = await window.api.account.testLogin(a.id)
+    if (testRes.success) {
+      message.success(testRes.message || '连接成功')
+    } else {
+      message.error(testRes.message || '连接失败')
+    }
+    // 刷新账号列表
+    await loadAccounts()
   } catch (e) {
     testConnectionLoading.value = false
   } finally {
@@ -279,14 +286,8 @@ onMounted(() => {
 
 <template>
   <div class="account-management">
-    <a-tour
-      v-model:current="current"
-      :open="open"
-      :steps="steps"
-      @close="handleOpen(false)"
-      :mask="false"
-      @change="onStepChange"
-    />
+    <a-tour v-model:current="current" :open="open" :steps="steps" @close="handleOpen(false)" :mask="false"
+      @change="onStepChange" />
 
     <div class="page-header">
       <div class="header-content">
@@ -326,43 +327,24 @@ onMounted(() => {
             <p class="account-username">@{{ account.account_name }}</p>
 
             <div class="status-info" data-guide="account-status">
-              <span
-                class="status-badge"
-                :class="{
-                  active: account.status == 'active',
-                  inactive: account.status == 'inactive'
-                }"
-                >{{ account.status == 'active' ? '已登录' : '未登录' }}</span
-              >
-              <span class="last-login" v-if="account.last_login_at"
-                >最后登录：{{ dayjs(account.last_login_at).format('YYYY/MM/DD HH:mm:ss') }}</span
-              >
+              <span class="status-badge" :class="{
+                active: account.status == 'active',
+                inactive: account.status == 'inactive'
+              }">{{ account.status == 'active' ? '已登录' : '未登录' }}</span>
+              <span class="last-login" v-if="account.last_login_at">最后登录：{{
+                dayjs(account.last_login_at).format('YYYY/MM/DD HH:mm:ss') }}</span>
             </div>
           </div>
           <div class="account-actions" data-guide="account-actions">
-            <button
-              class="btn btn-primary btn-sm"
-              @click="loginAccount(account)"
-              v-if="account.status == 'inactive'"
-            >
+            <button class="btn btn-primary btn-sm" @click="loginAccount(account)" v-if="account.status == 'inactive'">
               <span>登录账号</span>
             </button>
-            <button
-              class="btn btn-success btn-sm"
-              @click="testConnection(account)"
-              v-if="account.status == 'active'"
-              :disabled="testConnectionLoading"
-              :loading="testConnectionLoading"
-            >
+            <button class="btn btn-success btn-sm" @click="testConnection(account)" v-if="account.status == 'active'"
+              :disabled="testConnectionLoading" :loading="testConnectionLoading">
               <span>{{ testConnectionLoading ? '测试中' : '测试连接' }}</span>
             </button>
-            <button
-              class="btn btn-info btn-sm"
-              :disabled="openAccountLoading"
-              :loading="openAccountLoading"
-              @click="openAccount(account)"
-              v-if="account.status == 'active'"
-            >
+            <button class="btn btn-info btn-sm" :disabled="openAccountLoading" :loading="openAccountLoading"
+              @click="openAccount(account)" v-if="account.status == 'active'">
               <span>
                 {{ openAccountLoading ? '打开中' : '打开' }}
               </span>
@@ -396,23 +378,12 @@ onMounted(() => {
 
             <div class="form-group">
               <label>账号名称</label>
-              <input
-                type="text"
-                class="form-input"
-                v-model="editForm.account_name"
-                required
-                placeholder="输入账号名称或用户名"
-              />
+              <input type="text" class="form-input" v-model="editForm.account_name" required placeholder="输入账号名称或用户名" />
             </div>
 
             <div class="form-group">
               <label>显示名称</label>
-              <input
-                type="text"
-                class="form-input"
-                v-model="editForm.display_name"
-                placeholder="输入显示名称（可选）"
-              />
+              <input type="text" class="form-input" v-model="editForm.display_name" placeholder="输入显示名称（可选）" />
             </div>
           </form>
         </div>

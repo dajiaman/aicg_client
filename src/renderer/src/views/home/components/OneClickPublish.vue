@@ -144,11 +144,7 @@ defineExpose({
 
             <div class="edit-field">
               <span>描述</span>
-              <a-input
-                type="textarea"
-                v-model:value="publishDescription"
-                placeholder="输入发布描述"
-              />
+              <a-input type="textarea" v-model:value="publishDescription" placeholder="输入发布描述" />
             </div>
 
             <div class="edit-field">
@@ -158,24 +154,14 @@ defineExpose({
                   #{{ tag }}
                   <button type="button" @click.stop="removeTag(tag)">x</button>
                 </span>
-                <input
-                  type="text"
-                  placeholder="输入标签后回车"
-                  v-model="tagInput"
-                  @keyup.enter="addTagFromInput"
-                  @keydown.backspace="handleTagBackspace"
-                />
+                <input type="text" placeholder="输入标签后回车" v-model="tagInput" @keyup.enter="addTagFromInput"
+                  @keydown.backspace="handleTagBackspace" />
               </div>
             </div>
           </div>
 
           <div class="cover-row compact">
-            <button
-              class="cover-preview-trigger"
-              type="button"
-              aria-label="放大预览封面"
-              v-if="coverPreviewSrc"
-            >
+            <button class="cover-preview-trigger" type="button" aria-label="放大预览封面" v-if="coverPreviewSrc">
               <img :src="coverPreviewSrc" alt="封面预览" />
             </button>
             <div class="cover-empty" v-else>
@@ -206,23 +192,12 @@ defineExpose({
 
         <div class="account-summary">
           <div class="account-grid">
-            <button
-              type="button"
-              class="account-card"
-              :class="{
-                selected: isAccountSelected(acc.id)
-              }"
-              v-for="(acc, index) in allAccounts"
-              :key="index"
-              @click="toggleAccountSelected(acc.id)"
-            >
-              <span
-                class="account-avatar"
-                :style="{
-                  background: getPlatformColor(acc.platform)
-                }"
-                >{{ getPlatformBadgeText(acc.platform) }}</span
-              >
+            <button type="button" class="account-card" :class="{
+              selected: isAccountSelected(acc.id)
+            }" v-for="(acc, index) in allAccounts" :key="index" @click="toggleAccountSelected(acc.id)">
+              <span class="account-avatar" :style="{
+                background: getPlatformColor(acc.platform)
+              }">{{ getPlatformBadgeText(acc.platform) }}</span>
               <span class="account-card-main">
                 <b>{{ acc.account_name }}</b>
                 <small>{{ getPlatformDisplayName(acc.platform) }}</small>
@@ -237,24 +212,14 @@ defineExpose({
             <span>发布方式</span>
           </div>
           <div class="mode-toggle" aria-label="发布方式" role="radiogroup">
-            <button
-              type="button"
-              class="mode-option"
-              :class="{
-                active: publishMode === 'draft'
-              }"
-              @click="setPublishMode('draft')"
-            >
+            <button type="button" class="mode-option" :class="{
+              active: publishMode === 'draft'
+            }" @click="setPublishMode('draft')">
               草稿
             </button>
-            <button
-              type="button"
-              class="mode-option"
-              :class="{
-                active: publishMode === 'direct'
-              }"
-              @click="setPublishMode('direct')"
-            >
+            <button type="button" class="mode-option" :class="{
+              active: publishMode === 'direct'
+            }" @click="setPublishMode('direct')">
               直接发布
             </button>
           </div>
@@ -274,58 +239,37 @@ defineExpose({
     <BenchmarkProgress :loading="loading" :text="progressText" />
 
     <!-- ========== 添加账号弹窗 ========== -->
-    <a-modal
-      v-model:open="addAccountModalOpen"
-      centered
-      title="添加发布账号"
-      :width="520"
-      :footer="null"
-      :mask-closable="false"
-      class="publish-account-modal"
-    >
+    <a-modal v-model:open="addAccountModalOpen" centered title="添加发布账号" :width="520" :footer="null"
+      :mask-closable="false" class="publish-account-modal">
       <div class="account-modal-body">
         <p class="modal-tip">添加后请到账号管理完成登录，登录成功后即可用于一键发布。</p>
         <a-form layout="vertical">
           <a-form-item label="平台类型" required>
-            <a-select
-              v-model:value="newAccount.platform"
-              placeholder="请选择发布平台类型"
-              popup-class-name="dark-dropdown"
-            >
-              <a-select-option
-                v-for="platform in supportedPlatforms"
-                :key="platform.key"
-                :value="platform.key"
-              >
+            <a-select v-model:value="newAccount.platform" placeholder="请选择发布平台类型" popup-class-name="dark-dropdown">
+              <a-select-option v-for="platform in supportedPlatforms" :key="platform.key" :value="platform.key"
+                size="large">
                 {{ platform.name }}
               </a-select-option>
             </a-select>
+            <div class="form-help">请选择要发布的平台，例如某音、小某书、某手。</div>
           </a-form-item>
           <a-form-item label="账号名称" required>
-            <a-input v-model:value="newAccount.account_name" placeholder="输入账号名称或用户名" />
+            <a-input v-model:value="newAccount.account_name" size="large" placeholder="输入账号名称或用户名" />
           </a-form-item>
           <a-form-item label="显示名称">
-            <a-input v-model:value="newAccount.display_name" placeholder="输入显示名称（可选）" />
+            <a-input v-model:value="newAccount.display_name" size="large" placeholder="输入显示名称（可选）" />
           </a-form-item>
         </a-form>
 
         <div class="modal-actions">
-          <a-button @click="closeAddAccountModal">取消</a-button>
-          <a-button
-            v-if="createdAccountId"
-            :loading="loginAccountLoading"
-            @click="setupLoginForCreatedAccount"
-          >
+          <button class="modal-btn ghost" @click="closeAddAccountModal">取消</button>
+          <button class="modal-btn ghost" v-if="createdAccountId" :loading="loginAccountLoading" @click="setupLoginForCreatedAccount">
             {{ loginAccountLoading ? '登录中...' : '登录账号' }}
-          </a-button>
-          <a-button
-            type="primary"
-            :loading="addingAccount"
-            :disabled="!newAccount.platform || !newAccount.account_name"
-            @click="submitAddAccount"
-          >
+          </button>
+          <button class="modal-btn primary" :disabled="addingAccount"
+            @click="submitAddAccount">
             {{ addingAccount ? '添加中...' : '添加账号' }}
-          </a-button>
+          </button>
         </div>
       </div>
     </a-modal>
@@ -356,11 +300,9 @@ defineExpose({
   overflow: hidden;
   border-radius: 22px;
   background:
-    radial-gradient(
-      circle at 18% 0,
+    radial-gradient(circle at 18% 0,
       color-mix(in srgb, var(--theme-primary-light) 16%, transparent),
-      transparent 28%
-    ),
+      transparent 28%),
     linear-gradient(145deg, var(--theme-overlay-light), var(--theme-overlay-light));
   border: 1px solid color-mix(in srgb, var(--theme-border-gray) 16%, transparent);
   box-shadow: 0 18px 48px color-mix(in srgb, var(--theme-background) 30%, transparent);
@@ -583,7 +525,7 @@ defineExpose({
 }
 
 .cover-row.compact,
-.cover-row > div {
+.cover-row>div {
   display: grid;
   align-content: center;
   gap: 6px;
@@ -591,7 +533,7 @@ defineExpose({
 
 .cover-empty,
 .cover-preview-trigger,
-.cover-row > img {
+.cover-row>img {
   width: 112px;
   aspect-ratio: 9/16;
   border-radius: 12px;
@@ -603,7 +545,7 @@ defineExpose({
 
 .cover-row.compact .cover-empty,
 .cover-row.compact .cover-preview-trigger,
-.cover-row.compact > img {
+.cover-row.compact>img {
   align-self: center;
   justify-self: center;
 }
@@ -735,11 +677,9 @@ defineExpose({
 }
 
 .account-card.selected {
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--theme-primary) 62%, transparent),
-    color-mix(in srgb, var(--theme-secondary-dark) 44%, transparent)
-  );
+  background: linear-gradient(135deg,
+      color-mix(in srgb, var(--theme-primary) 62%, transparent),
+      color-mix(in srgb, var(--theme-secondary-dark) 44%, transparent));
   border-color: color-mix(in srgb, var(--theme-info) 58%, transparent);
   box-shadow: 0 12px 28px color-mix(in srgb, var(--theme-primary) 18%, transparent);
 }
@@ -833,11 +773,9 @@ defineExpose({
 
 .mode-option.active {
   color: var(--theme-text-primary);
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--theme-primary-light) 96%, transparent),
-    color-mix(in srgb, var(--theme-info) 86%, transparent)
-  );
+  background: linear-gradient(135deg,
+      color-mix(in srgb, var(--theme-primary-light) 96%, transparent),
+      color-mix(in srgb, var(--theme-info) 86%, transparent));
   box-shadow: 0 8px 18px color-mix(in srgb, var(--theme-primary) 22%, transparent);
 }
 
@@ -914,6 +852,47 @@ defineExpose({
   border-color: color-mix(in srgb, var(--theme-info) 24%, transparent) !important;
 }
 
+
+.cover-preview-body {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--theme-background) 72%, transparent);
+}
+
+.cover-preview-image {
+  max-width: 100%;
+  max-height: 72vh;
+  -o-object-fit: contain;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.cover-preview-modal .ant-modal-content {
+  overflow: hidden;
+  background: color-mix(in srgb, var(--theme-background-light) 96%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--theme-info) 22%, transparent);
+  border-radius: 18px;
+  box-shadow: 0 24px 72px color-mix(in srgb, var(--theme-background) 60%, transparent);
+}
+
+.cover-preview-modal .ant-modal-header {
+  background: transparent !important;
+}
+
+.cover-preview-modal .ant-modal-title {
+  color: var(--theme-text-primary) !important;
+  font-weight: 900;
+}
+
+.cover-preview-modal .ant-modal-close {
+  color: var(--theme-text-muted) !important;
+}
+</style>
+
+
+<style lang="scss">
 .account-modal-body {
   display: grid;
   gap: 16px;
@@ -929,7 +908,7 @@ defineExpose({
   line-height: 1.5;
 }
 
-.account-modal-body .ant-form-item-label > label {
+.account-modal-body .ant-form-item-label>label {
   color: var(--theme-text-muted);
   font-weight: 900;
 }
@@ -992,22 +971,6 @@ defineExpose({
 .modal-btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
-}
-
-.cover-preview-body {
-  display: flex;
-  justify-content: center;
-  padding: 8px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--theme-background) 72%, transparent);
-}
-
-.cover-preview-image {
-  max-width: 100%;
-  max-height: 72vh;
-  -o-object-fit: contain;
-  object-fit: contain;
-  border-radius: 10px;
 }
 
 .publish-account-modal .ant-modal-content {
@@ -1073,26 +1036,5 @@ defineExpose({
 
 .publish-account-dropdown .ant-select-item-option-state {
   color: var(--theme-info) !important;
-}
-
-.cover-preview-modal .ant-modal-content {
-  overflow: hidden;
-  background: color-mix(in srgb, var(--theme-background-light) 96%, transparent) !important;
-  border: 1px solid color-mix(in srgb, var(--theme-info) 22%, transparent);
-  border-radius: 18px;
-  box-shadow: 0 24px 72px color-mix(in srgb, var(--theme-background) 60%, transparent);
-}
-
-.cover-preview-modal .ant-modal-header {
-  background: transparent !important;
-}
-
-.cover-preview-modal .ant-modal-title {
-  color: var(--theme-text-primary) !important;
-  font-weight: 900;
-}
-
-.cover-preview-modal .ant-modal-close {
-  color: var(--theme-text-muted) !important;
 }
 </style>

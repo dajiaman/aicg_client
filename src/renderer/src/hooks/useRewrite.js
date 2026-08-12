@@ -70,6 +70,7 @@ export function useRewrite() {
       return { success: false, error: '未选择模板' }
     }
 
+
     loading.value = true
     progressText.value = 'AI正在处理文案...'
     try {
@@ -95,9 +96,6 @@ export function useRewrite() {
           rewrittenContent.value = fullText
         }
       })
-
-      // 获取 AI 配置
-      const aiConfig = await getAIConfig()
 
       let result
       try {

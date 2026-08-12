@@ -540,7 +540,7 @@ const handleConfirm = async () => {
       throw new Error('导出图片为空')
     }
 
-    const result = await window.api.cover.saveTempImage({
+    const result = await window.api.cover.save({
       dataUrl: dataUrl,
       ext: 'jpg'
     })

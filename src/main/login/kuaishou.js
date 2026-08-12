@@ -1,15 +1,14 @@
 /**
  * 快手平台登录实现
  */
-
-import { getChromeExecutablePath, launchBrowserWithCookies } from '../publish/utils.js'
+import logger from '../log/index.js'
 
 export class KuaishouPlatform {
   name = '快手'
   key = 'kuaishou'
 
   config = {
-    loginUrl: 'https://cp.kuaishou.com/',
+    loginUrl: 'https://passport.kuaishou.com/pc/account/login/?sid=kuaishou.web.cp.api&callback=https%3A%2F%2Fcp.kuaishou.com%2Frest%2Finfra%2Fsts%3FfollowUrl%3Dhttps%253A%252F%252Fcp.kuaishou.com%252Fprofile%26setRootDomain%3Dtrue',
     successUrlIncludes: ['cp.kuaishou.com/article', 'cp.kuaishou.com/profile'],
     keyCookies: ['kuaishou.web.cp.api_st', 'userId'],
     nicknameSelectors: ['.user-name', '.name'],
@@ -24,13 +23,18 @@ export class KuaishouPlatform {
       ],
       notLoggedInSelectors: [
         'div[class*="login"]',
+        'div[class*="login-content"]',
         'div[class*="qrcode"]',
         'button:has-text("登录")'
       ]
     }
   }
 
+  /**
+   * 检测登录状态
+   */
   async detectLogin(page, context) {
+    logger.info(`[kuaishou] Detect login status...`)
     const cookies = await context.cookies()
     const cookieNames = new Set(cookies.map((c) => c.name))
     const hasKeyCookies = this.config.keyCookies.some((k) => cookieNames.has(k))
@@ -65,6 +69,9 @@ export class KuaishouPlatform {
     return (hasKeyCookies && urlMatched) || (loginBoxGone && hasLoggedInElements)
   }
 
+  /**
+   * 验证 Cookie 是否有效
+   */
   async validateCookie(context, page) {
     await page.goto(this.config.loginUrl, { waitUntil: 'networkidle', timeout: 30000 })
     await page.waitForTimeout(2000)
@@ -125,21 +132,11 @@ export class KuaishouPlatform {
   /**
    * 登录快手
    */
-  async login(options = {}, onProgress = () => {}) {
-    const { chromium } = await import('playwright')
-
-    onProgress('正在启动浏览器...')
-    const browser = await chromium.launch({
-      headless: options.headless || false,
-      args: ['--start-maximized', '--disable-blink-features=AutomationControlled'],
-      executablePath: getChromeExecutablePath()
-    })
-
+  async login(context, browser) {
     try {
-      const context = await browser.newContext({ viewport: null })
       const page = await context.newPage()
 
-      onProgress(`正在打开${this.name}登录页，请在浏览器中扫码/登录...`)
+      logger.info(`正在打开${this.name}登录页，请在浏览器中扫码/登录...`)
       await page.goto(this.config.loginUrl, { waitUntil: 'domcontentloaded', timeout: 60000 })
 
       const timeoutMs = 5 * 60 * 1000
@@ -159,7 +156,7 @@ export class KuaishouPlatform {
         throw new Error('登录超时，请重试')
       }
 
-      onProgress('登录成功，正在获取账号信息...')
+      logger.info('登录成功，正在获取账号信息...')
       await page.waitForTimeout(1200)
 
       const cookies = await context.cookies()
@@ -191,6 +188,9 @@ export class KuaishouPlatform {
     }
   }
 
+  /**
+   * 从页面中提取昵称
+   */
   async detectNickname(page) {
     for (const sel of this.config.nicknameSelectors) {
       try {
@@ -205,64 +205,13 @@ export class KuaishouPlatform {
   }
 
   /**
-   * 等待视频上传完成
+   * 打开快手账号页面
    */
-  async waitUploadComplete(page, options = {}) {
-    const { timeout = 300000, onProgress = () => {} } = options
-    const startTime = Date.now()
-
-    while (Date.now() - startTime < timeout) {
-      try {
-        // 快手上传完成后会出现视频预览
-        const previewExists = await page
-          .locator('div[class*="preview"], video')
-          .first()
-          .isVisible()
-          .catch(() => false)
-        if (previewExists) {
-          logger.info('[kuaishou] video upload complete')
-          onProgress('视频上传完成')
-          return true
-        }
-
-        // 检查上传进度
-        const progressText = await page
-          .locator('span[class*="progress"], div[class*="progress"]')
-          .first()
-          .innerText()
-          .catch(() => '')
-        if (progressText.includes('100%') || progressText.includes('上传成功')) {
-          logger.info('[kuaishou] video upload complete')
-          onProgress('视频上传完成')
-          return true
-        }
-
-        // 标题输入框出现说明已进入编辑状态
-        const titleBox = page.locator('input[class*="title"], textarea[class*="title"]').first()
-        if ((await titleBox.count()) > 0 && (await titleBox.isVisible())) {
-          logger.info('[kuaishou] title box visible, upload assumed complete')
-          onProgress('视频上传完成（标题框已出现）')
-          return true
-        }
-
-        onProgress('等待视频上传...')
-      } catch (e) {
-        logger.debug(`[kuaishou] upload check error: ${e.message}`)
-      }
-
-      await page.waitForTimeout(2000)
-    }
-
-    throw new Error('视频上传超时')
-  }
-
-  // 打开
-  async openAccount(platform, cookieStr) {
+  async openAccount(context, browser) {
     try {
-      const { context } = await launchBrowserWithCookies(platform, cookieStr)
-
       const page = await context.newPage()
-      await page.goto('https://creator.douyin.com/creator-micro/home', {
+      // 快手创作者平台网页
+      await page.goto('https://cp.kuaishou.com/profile', {
         waitUntil: 'domcontentloaded',
         timeout: 90000
       })
@@ -272,6 +221,45 @@ export class KuaishouPlatform {
       }
     } catch (error) {
       logger.error('testLogin', error)
+      return {
+        success: false,
+        message: error.message
+      }
+    }
+  }
+
+  /**
+   * 测试登录
+   * @param {*} options
+   */
+  async testLogin(context, browser) {
+    try {
+      const page = await context.newPage()
+      // 快手创作者平台网页
+      await page.goto('https://cp.kuaishou.com/profile', {
+        waitUntil: 'domcontentloaded',
+        timeout: 90000
+      })
+
+      const timeoutMs = 5 * 60 * 1000
+      const start = Date.now()
+      let loggedIn = false
+
+      while (Date.now() - start < timeoutMs) {
+        if (browser.isConnected() === false) {
+          return { success: false, message: '浏览器已关闭' }
+        }
+        loggedIn = await this.detectLogin(page, context)
+        if (loggedIn) break
+        await page.waitForTimeout(1500)
+      }
+
+      return {
+        success: true,
+        loggedIn: loggedIn
+      }
+    } catch (error) {
+      console.error('testLogin', error)
       return {
         success: false,
         message: error.message

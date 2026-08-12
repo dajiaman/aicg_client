@@ -8,6 +8,7 @@ import { usePermission } from '../../../hooks/usePermission'
 import { CheckOutlined, EditOutlined, SafetyCertificateOutlined } from '@ant-design/icons-vue'
 import LegalReviewHighlighted from './LegalReviewHighlighted.vue'
 import BenchmarkProgress from '../../../components/BenchmarkProgress.vue'
+import { getAIConfig } from '../../../utils/index.js'
 
 const {
   pipeline,
@@ -67,6 +68,15 @@ const handleRewrite = async () => {
     message.warning('请先输入或改写文案内容')
     return
   }
+
+  // 获取 AI 配置
+  const aiConfig = await getAIConfig()
+
+  if (!aiConfig.apiKey) {
+    message.warning('请先配置大模型 API 密钥')
+    return
+  }
+
 
   // 改写开始
   notifyStepStart('rewrite')

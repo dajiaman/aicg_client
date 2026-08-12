@@ -38,7 +38,7 @@ export function registerAccountIpc(ipcMain) {
 
     try {
       const loginRes = await loginViaBrowser(platform)
-      if (!loginRes.success) {
+      if (!loginRes.success || !loginRes.data.cookies) {
         return { success: false, error: loginRes.error }
       }
 
@@ -77,9 +77,14 @@ export function registerAccountIpc(ipcMain) {
     try {
       const res = await testLoginBrowser(platform, cookies)
       if (!res.success) {
+        // 登录失效，改成 inactive 状态
+        await models.account.update(accountId, {
+          status: 'inactive',
+          last_login_at: new Date().toISOString()
+        })
         return { success: false, error: '未登录或已失效' }
       }
-      return { success: true, message: '测试成功' }
+      return { success: true, message: '连接成功' }
     } catch (error) {
       console.error('[account:test-login]', error)
       return { success: false, error: error.message }

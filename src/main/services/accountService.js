@@ -7,8 +7,9 @@
 import xiaohongshu from '../login/xiaohongshu.js'
 import douyin from '../login/douyin.js'
 import kuaishou from '../login/kuaishou.js'
-import wechatVideo from '../login/wechatVideo.js'
+import wxchannels from '../login/wxchannels.js'
 import { SUPPORTED_PLATFORMS } from '../constants.js'
+import { launchBrowserNoCookies, launchBrowserWithCookies } from '../publish/utils.js'
 
 /**
  * 平台实例映射
@@ -17,7 +18,7 @@ const PLATFORMS = {
   xiaohongshu,
   douyin,
   kuaishou,
-  wx_channels: wechatVideo
+  wx_channels: wxchannels
 }
 
 /**
@@ -42,13 +43,13 @@ function getPlatform(platform) {
 /**
  * 打开浏览器让用户登录
  * @param {string} platform 平台 key
- * @param {Object} options 配置选项
  * @param {Function} onProgress 进度回调
  */
-export async function loginViaBrowser(platform, options = {}, onProgress = () => {}) {
+export async function loginViaBrowser(platform) {
   const platformClass = getPlatform(platform)
   try {
-    return await platformClass.login(options, onProgress)
+    const { browser, context } = await launchBrowserNoCookies(platform)
+    return await platformClass.login(context, browser)
   } catch (error) {
     return { success: false, error: error.message }
   }
@@ -62,7 +63,8 @@ export async function loginViaBrowser(platform, options = {}, onProgress = () =>
 export async function testLoginBrowser(platform, cookieStr) {
   const platformClass = getPlatform(platform)
   try {
-    return await platformClass.testLogin(platform, cookieStr)
+    const { browser, context } = await launchBrowserWithCookies(platform, cookieStr)
+    return await platformClass.testLogin(context, browser)
   } catch (error) {
     return { success: false, error: error.message }
   }
@@ -76,7 +78,8 @@ export async function testLoginBrowser(platform, cookieStr) {
 export async function openAccountBrowser(platform, cookieStr) {
   const platformClass = getPlatform(platform)
   try {
-    return await platformClass.openAccount(platform, cookieStr)
+    const { browser, context } = await launchBrowserWithCookies(platform, cookieStr)
+    return await platformClass.openAccount(context, browser)
   } catch (error) {
     return { success: false, error: error.message }
   }

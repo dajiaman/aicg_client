@@ -21,7 +21,6 @@ export const useAuthStore = defineStore('auth', {
       localStorage.setItem('userInfo', JSON.stringify(userInfo))
     },
     reset() {
-      this.token = ''
       this.userInfo = { username: '', email: '' }
       localStorage.removeItem('userInfo')
     },
@@ -53,12 +52,10 @@ export const useAuthStore = defineStore('auth', {
     async login(form) {
       try {
         const res = await window.api.user.login(form.email.trim(), form.password.trim())
-        console.log('login res:', res)
         if (res?.success && res.data) {
           this.setUserInfo(res.data)
           this.saveToken(res.data.token)
           this.setLastLoginEmail(form.email.trim())
-
           // 自动登录
           if (form.autoLogin) {
             this.setAutoLoginCredentials({
@@ -86,7 +83,7 @@ export const useAuthStore = defineStore('auth', {
         })
         return {
           success: true,
-          data: res.data.userinfo
+          data: res.data.user
         }
       } else {
         return { success: false, error: res?.error || '获取用户信息失败' }
@@ -136,7 +133,6 @@ export const useAuthStore = defineStore('auth', {
     async logout() {
       console.log('logout')
       window.api.config.set('auth.token', '', 'auth')
-      localStorage.removeItem('userInfo')
       localStorage.removeItem('autoLoginCredentials')
       this.reset()
       return true

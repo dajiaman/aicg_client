@@ -33,8 +33,8 @@ export async function publishVideo(params) {
     description,
     tags,
     isDraft,
-    coverPath
-    // ⚠️ autoCloseBrowser publishToSingleAccount 不接收,这里丢弃
+    coverPath,
+    autoCloseBrowser
   } = params
 
   try {
@@ -64,7 +64,8 @@ export async function publishVideo(params) {
       description,
       tags,
       isDraft,
-      coverPath: coverPath && fs.existsSync(coverPath) ? coverPath : null
+      coverPath: coverPath && fs.existsSync(coverPath) ? coverPath : null,
+      autoCloseBrowser
     })
 
     // 写入发布记录
@@ -84,6 +85,7 @@ export async function publishVideo(params) {
     })
 
     logger.info(`[publish] done: ${result.success ? 'SUCCESS' : 'FAILED'}`)
+
     return result
   } catch (e) {
     logger.error(`[publish] error: ${e.message}`)

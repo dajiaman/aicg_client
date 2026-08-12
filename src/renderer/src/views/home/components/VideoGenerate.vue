@@ -1448,6 +1448,7 @@ onBeforeUnmount(() => {
   background: linear-gradient(90deg, var(--theme-primary), var(--theme-secondary)) !important;
   box-shadow: 0 14px 28px color-mix(in srgb, var(--theme-primary) 24%, transparent);
   font-weight: 900;
+  color: var(--theme-text-primary);
 }
 
 .marquee-container {

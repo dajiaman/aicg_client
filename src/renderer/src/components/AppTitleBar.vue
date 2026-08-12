@@ -67,10 +67,7 @@
 
       <a-dropdown placement="bottomRight">
         <div @click.prevent class="user-section">
-          <a-avatar
-            class="user-avatar-img"
-            style="width: 32px; height: 32px; line-height: 32px; font-size: 18px"
-          >
+          <a-avatar class="user-avatar-img" style="width: 32px; height: 32px; line-height: 32px; font-size: 18px">
             {{ displayName.slice(0, 1).toUpperCase() }}
           </a-avatar>
           <span class="user-name">{{ displayName }}</span>
@@ -91,8 +88,8 @@
               </router-link>
             </a-menu-item>
             <a-menu-divider />
-            <a-menu-item danger>
-              <span @click.stop="handleLogout">
+            <a-menu-item danger @click.stop="handleLogout">
+              <span>
                 <LogoutOutlined />
                 退出登录
               </span>
@@ -105,25 +102,14 @@
         <button class="control-btn minimize-btn" title="最小化" @click="handleMinimizeWindow" tabindex="0">
           <MinusOutlined />
         </button>
-        <button
-          class="control-btn maximize-btn"
-          title="最大化"
-          @click="handleMaximizeWindow"
-          v-if="!isMaximized"
-
-        >
+        <button class="control-btn maximize-btn" title="最大化" @click="handleMaximizeWindow" v-if="!isMaximized">
           <BorderOutlined />
         </button>
-        <button
-          class="control-btn maximize-btn"
-          title="取消最大化"
-          @click="handleUnmaximizeWindow"
-          v-if="isMaximized"
-          tabindex="0"
-        >
+        <button class="control-btn maximize-btn" title="取消最大化" @click="handleUnmaximizeWindow" v-if="isMaximized"
+          tabindex="0">
           <CompressOutlined />
         </button>
-        <button class="control-btn close-btn" title="关闭" @click="handleCloseWindow" >
+        <button class="control-btn close-btn" title="关闭" @click="handleCloseWindow">
           <CloseOutlined />
         </button>
       </div>

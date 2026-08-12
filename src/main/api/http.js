@@ -24,10 +24,10 @@ const DEFAULT_TIMEOUT = 30_000
 
 const envConfig = {
   development: {
-    baseURL: 'http://aigc.local/index.php'
+    baseURL: 'https://api.qingyu.heihoutech.com'
   },
   production: {
-    baseURL: 'http://aigc.local/index.php'
+    baseURL: 'https://api.qingyu.heihoutech.com'
   }
 }
 
@@ -60,6 +60,13 @@ function createInstance() {
       const token = getToken()
       if (token && !config.headers.token) {
         config.headers.token = `${token}`
+      }
+
+      const deviceId = models.config.get('auth.deviceId') || ''
+
+      // 注入设备 ID（用于设备识别）
+      if (deviceId && !config.headers['X-Device-Id']) {
+        config.headers['X-Device-Id'] = deviceId
       }
 
       // 注入请求 ID（用于链路追踪）

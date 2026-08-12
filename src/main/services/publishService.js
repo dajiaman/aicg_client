@@ -29,7 +29,7 @@ const UPLOAD_HANDLERS = {
  */
 export async function publishToSingleAccount(
   account,
-  { platform, videoPath, title, description, tags, isDraft, coverPath },
+  { platform, videoPath, title, description, tags, isDraft, coverPath, autoCloseBrowser = false },
   onProgress
 ) {
   const handler = UPLOAD_HANDLERS[platform]
@@ -72,6 +72,11 @@ export async function publishToSingleAccount(
     })
 
     if (onProgress) onProgress({ message: `${PLATFORM_NAMES[platform]} 发布完成` })
+
+    // 如果自动关闭浏览器，关闭浏览器
+    if (autoCloseBrowser) {
+      await browser.close()
+    }
 
     logger.info(`[publish] === ${platform} publish SUCCESS ===`)
     return {

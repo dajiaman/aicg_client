@@ -1,6 +1,6 @@
 import { chromium } from 'playwright'
 import { join } from 'path'
-import logger from '../log'
+import logger from '../log/index.js'
 import { getAppRootPath } from '../ipc/file.ipc'
 
 const COOKIE_DOMAINS = {
@@ -34,6 +34,31 @@ function cookiesToJson(cookies) {
   }
   if (Array.isArray(cookies)) return cookies
   return []
+}
+
+/**
+ * 无cookie启动浏览器
+ * @param {*} platform
+ * @returns
+ */
+export async function launchBrowserNoCookies(platform) {
+  logger.info(`launching browser for ${platform} without cookies`)
+  const executablePath = getChromeExecutablePath()
+  logger.info(`chrome executable: ${executablePath}`)
+
+  const browser = await chromium.launch({
+    headless: false,
+    executablePath,
+    args: ['--disable-blink-features=AutomationControlled']
+  })
+
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 800 },
+    userAgent:
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
+  })
+
+  return { browser, context }
 }
 
 /**

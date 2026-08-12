@@ -33,8 +33,7 @@ if (!logsDir) {
 logger.transports.file.level = 'debug'
 logger.transports.file.resolvePathFn = () => {
   const date = new Date()
-  const name =
-    date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+  const name = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
   return path.join(logsDir, name + '.log')
 }
 

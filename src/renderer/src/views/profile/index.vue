@@ -59,7 +59,7 @@
             <a-form-item label="积分">
               <span class="points">
                 <ThunderboltOutlined class="points-icon" />
-                {{ authStore.userInfo.score }}
+                {{ authStore.userInfo.user.score }}
               </span>
             </a-form-item>
 

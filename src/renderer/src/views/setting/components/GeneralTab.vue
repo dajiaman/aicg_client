@@ -12,10 +12,10 @@
           <span>云端</span>
         </label> -->
       </div>
-      <p class="text-xs text-gray-400">选择服务运行模式：本地优先使用本机能力，云端调用远程API</p>
+      <!-- <p class="text-xs text-gray-400">选择服务运行模式：本地优先使用本机能力，云端调用远程API</p> -->
     </div>
 
-    <div class="space-y-3">
+    <div class="space-y-3 hidden">
       <div class="flex items-center justify-between">
         <div>
           <div class="font-semibold">声音合成高性能模式</div>
@@ -103,7 +103,7 @@
     </div>
 
     <div class="flex items-center gap-2">
-      <a-button class="btn-primary" @click="save">保存设置</a-button>
+      <a-button size="large" type="primary" class="btn-primary" @click="save">保存设置</a-button>
     </div>
   </div>
 </template>

@@ -37,10 +37,9 @@ function safeUnlink(p) {
  * 获取数据库路径
  */
 export function getDbPath() {
-  const projectRoot = process.cwd()
-  const userData = app ? app.getPath('userData') : path.join(projectRoot, '.local-userdata')
-  ensureDir(userData)
-  return path.join(userData, 'aigc_client.db')
+  const userData = app.getPath('userData')
+  ensureDir(path.join(userData, 'data'))
+  return path.join(userData, 'data', 'aigc_client.db')
 }
 
 /**
@@ -127,11 +126,10 @@ function seedDefaultData() {
     return new Date().toISOString()
   }
   const appRoot = getAppRootPath()
-  const assetsDir = path.join(appRoot, 'resources', 'assets')
-  const __userDataDir =
-    app && app.getPath ? app.getPath('userData') : path.join(process.cwd(), '.local-userdata')
-  ensureDir(__userDataDir)
-  const __outputsDir = path.join(appRoot, 'outputs')
+  const resourcesDir = path.join(appRoot, 'resources')
+  const assetsDir = path.join(resourcesDir, 'assets')
+  const outputsDir = path.join(appRoot, 'outputs')
+  ensureDir(outputsDir)
 
   const countConfig = db.prepare('SELECT COUNT(*) AS c FROM config').get().c
   if (countConfig === 0) {
@@ -215,7 +213,7 @@ function seedDefaultData() {
       })
       ins.run({
         key: 'paths.baseOutput',
-        value: __outputsDir,
+        value: outputsDir,
         category: 'paths',
         description: '默认paths.baseOutput配置',
         created_at: '2026-07-15T13:11:47.743Z',
@@ -223,7 +221,7 @@ function seedDefaultData() {
       })
       ins.run({
         key: 'paths.audioOutput',
-        value: path.join(__outputsDir, 'audios'),
+        value: path.join(outputsDir, 'audios'),
         category: 'paths',
         description: '默认paths.audioOutput配置',
         created_at: '2026-07-15T13:11:47.743Z',
@@ -231,7 +229,7 @@ function seedDefaultData() {
       })
       ins.run({
         key: 'paths.videoOutput',
-        value: path.join(__outputsDir, 'videos'),
+        value: path.join(outputsDir, 'videos'),
         category: 'paths',
         description: '默认paths.videoOutput配置',
         created_at: '2026-07-15T13:11:47.743Z',
@@ -239,7 +237,7 @@ function seedDefaultData() {
       })
       ins.run({
         key: 'paths.draftOutput',
-        value: path.join(__outputsDir, 'drafts'),
+        value: path.join(outputsDir, 'drafts'),
         category: 'paths',
         description: '默认paths.draftOutput配置',
         created_at: '2026-07-15T13:11:47.743Z',
@@ -247,7 +245,7 @@ function seedDefaultData() {
       })
       ins.run({
         key: 'paths.exportOutput',
-        value: path.join(__outputsDir, 'exports'),
+        value: path.join(outputsDir, 'exports'),
         category: 'paths',
         description: '默认paths.exportOutput配置',
         created_at: '2026-07-15T13:11:47.743Z',
@@ -255,7 +253,7 @@ function seedDefaultData() {
       })
       ins.run({
         key: 'paths.thumbs',
-        value: path.join(__outputsDir, 'thumbs'),
+        value: path.join(outputsDir, 'thumbs'),
         category: 'paths',
         description: '默认paths.thumbs配置',
         created_at: '2026-07-15T13:11:47.743Z',

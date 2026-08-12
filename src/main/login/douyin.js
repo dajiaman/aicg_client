@@ -1,14 +1,13 @@
 /**
  * 抖音平台登录实现
  */
-import { getChromeExecutablePath, launchBrowserWithCookies } from '../publish/utils.js'
-import logger from '../log'
+import logger from '../log/index.js'
 
 /**
  * 固定的 Chrome User-Agent
  * 统一登录环境特征，避免被平台风控识别为非常规客户端
  */
-const CHROME_USER_AGENT =
+export const CHROME_USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
 
 /**
@@ -42,42 +41,45 @@ export class DouyinPlatform {
 
   /**
    * 检测是否已登录
+   * 判定条件(全部满足才算登录成功):
+   *   1. 关键 cookies 存在且 value 非空
+   *   2. URL 已跳转到 creator-micro 内部页面
+   *   3. 没有"未登录"标志元素(登录框 / 登录按钮)
    */
   async detectLogin(page, context) {
+    logger.info('检测登录状态...')
     const cookies = await context.cookies()
     const cookieNames = new Set(cookies.map((c) => c.name))
-    const hasKeyCookies = this.config.keyCookies.some((k) => cookieNames.has(k))
 
+    // 1. 关键 cookies 必须全部存在且 value 非空
+    const keyCookieValues = cookies
+      .filter((c) => this.config.keyCookies.includes(c.name))
+      .map((c) => c.value)
+    const hasKeyCookies =
+      keyCookieValues.length > 0 && keyCookieValues.every((v) => v && String(v).length > 0)
+
+    // 2. URL 必须在 creator-micro 内部页面
     const url = page.url()
     const urlMatched = this.config.successUrlIncludes.some((u) => url.includes(u))
 
-    let loginBoxGone = true
-    try {
-      const box = await page.$(this.config.loginBoxSelector)
-      if (box) {
-        loginBoxGone = !(await box.isVisible())
-      }
-    } catch {
-      loginBoxGone = true
-    }
-
-    let hasLoggedInElements = false
-    for (const selector of this.config.validation.loggedInSelectors) {
+    // 3. 不能出现"未登录"标志元素(登录框 / 登录按钮)
+    let hasNotLoggedInElement = false
+    for (const selector of this.config.validation.notLoggedInSelectors) {
       try {
         const element = await page.$(selector)
         if (element) {
           const isVisible = await element.isVisible().catch(() => false)
           if (isVisible) {
-            hasLoggedInElements = true
+            hasNotLoggedInElement = true
             break
           }
         }
-      } catch (error) {
-        log.error(`[douyin] 检测登录状态时出错: ${error.message}`)
+      } catch {
+        // ignore
       }
     }
 
-    return (hasKeyCookies && urlMatched) || (loginBoxGone && hasLoggedInElements)
+    return hasKeyCookies && urlMatched && !hasNotLoggedInElement
   }
 
   /**
@@ -147,31 +149,22 @@ export class DouyinPlatform {
   /**
    * 登录抖音
    */
-  async login(options = {}, onProgress = () => {}) {
-    const { chromium } = await import('playwright')
-    onProgress('正在启动浏览器...')
-    const browser = await chromium.launch({
-      headless: options.headless || false,
-      args: ['--start-maximized', '--disable-blink-features=AutomationControlled'],
-      executablePath: getChromeExecutablePath()
-    })
-
+  async login(context, browser) {
     try {
-      const context = await browser.newContext({
-        viewport: null,
-        userAgent: CHROME_USER_AGENT
-      })
       const page = await context.newPage()
-
-      onProgress(`正在打开${this.name}登录页，请在浏览器中扫码/登录...`)
+      logger.info(`正在打开${this.name}登录页，请在浏览器中扫码/登录...`)
       await page.goto(this.config.loginUrl, { waitUntil: 'domcontentloaded', timeout: 60000 })
+      // 等待登录页加载完成
+      await page.waitForTimeout(2000)
 
-      const timeoutMs = 5 * 60 * 1000
+      // 等待登录完成
+      const timeoutMs = 2 * 60 * 1000
       const start = Date.now()
       let loggedIn = false
 
       while (Date.now() - start < timeoutMs) {
         if (browser.isConnected() === false) {
+          logger.error('浏览器已关闭')
           return { success: false, message: '浏览器已关闭' }
         }
         loggedIn = await this.detectLogin(page, context)
@@ -183,7 +176,7 @@ export class DouyinPlatform {
         throw new Error('登录超时，请重试')
       }
 
-      onProgress('登录成功，正在获取账号信息...')
+      logger.info('登录成功，正在获取账号信息...')
       await page.waitForTimeout(1200)
 
       const cookies = await context.cookies()
@@ -238,12 +231,10 @@ export class DouyinPlatform {
    * 测试登录
    * @param {*} options
    */
-  async testLogin(platform, cookieStr) {
+  async testLogin(context, browser) {
     try {
-      const { context } = await launchBrowserWithCookies(platform, cookieStr)
-
       const page = await context.newPage()
-      await page.goto('https://creator.douyin.com/creator-micro/content/upload', {
+      await page.goto('https://creator.douyin.com/creator-micro/home', {
         waitUntil: 'domcontentloaded',
         timeout: 90000
       })
@@ -278,16 +269,24 @@ export class DouyinPlatform {
    * 测试登录
    * @param {*} options
    */
-  async openAccount(platform, cookieStr) {
-    const { context } = await launchBrowserWithCookies(platform, cookieStr)
-    const page = await context.newPage()
-    await page.goto('https://creator.douyin.com/creator-micro/home', {
-      waitUntil: 'domcontentloaded',
-      timeout: 90000
-    })
+  async openAccount(context, browser) {
+    try {
+      logger.info(`正在打开${this.name}账号页`)
+      const page = await context.newPage()
+      await page.goto('https://creator.douyin.com/creator-micro/home', {
+        waitUntil: 'domcontentloaded',
+        timeout: 90000
+      })
 
-    return {
-      success: true
+      return {
+        success: true
+      }
+    } catch (error) {
+      logger.error('openAccount', error)
+      return {
+        success: false,
+        message: error.message
+      }
     }
   }
 }

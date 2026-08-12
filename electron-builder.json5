@@ -1,6 +1,6 @@
 {
   appId: 'com.aigc.client',
-  productName: '轻语IP',
+  productName: '轻语IP智能体',
   directories: { buildResources: 'build' },
   asar: false,
   files: [
@@ -26,10 +26,12 @@
     { from: 'resources/chromadb', to: 'chromadb', filter: ['**/*'] }
   ],
   nsis: {
-    artifactName: '${name}-${version}-setup.${ext}',
-    shortcutName: '${productName}',
-    uninstallDisplayName: '${productName}',
-    createDesktopShortcut: 'always'
+    artifactName: '${productName}-${version}-setup.${ext}',
+    shortcutName: '轻语IP',
+    oneClick: false,
+    allowToChangeInstallationDirectory: true,
+    createDesktopShortcut: 'always',
+    uninstallDisplayName: '${productName}'
   },
   win: {
     target: [{ target: 'nsis', arch: ['x64'] }]

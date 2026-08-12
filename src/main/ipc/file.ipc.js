@@ -2,8 +2,8 @@ import fs from 'fs/promises'
 import { copyFile, stat as fstat, readdir } from 'fs/promises'
 import path, { join, dirname, isAbsolute } from 'path'
 import { app, BrowserWindow, dialog, shell } from 'electron'
-import logger from '../log'
-import { ensureDir } from '../utils/index'
+import logger from '../log/index.js'
+import { ensureDir } from '../utils/index.js'
 import { models } from '../database/services'
 
 /**
@@ -14,7 +14,9 @@ export function getAppRootPath() {
   if (!app.isPackaged) {
     appRoot = process.cwd()
   } else {
-    appRoot = dirname(app.getAppPath())
+    // exe 程序目录
+    const exeDir = path.dirname(process.execPath)
+    appRoot = exeDir
   }
   return appRoot
 }

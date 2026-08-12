@@ -591,9 +591,10 @@ export function registerCoverIpc(ipcMain) {
   ipcMain.handle('cover:save-temp-image', async (_, params) => {
     logger.info(`[cover:save-temp-image]`)
     try {
+      const tempDir = getTempPath()
       // dataUrl base64
       const { dataUrl, ext } = params
-      const outputPath = path.join(getAppRootPath(), 'covers', `cover_${Date.now()}.${ext}`)
+      const outputPath = path.join(tempDir, 'cover-frame', `cover_${Date.now()}.${ext}`)
 
       // 1. 参数校验
       if (!params) return { success: false, error: '参数不能为空' }
@@ -636,9 +637,9 @@ export function registerCoverIpc(ipcMain) {
       // 6. 写入文件
       try {
         fs.writeFileSync(outputPath, buffer)
-        logger.info(`[cover:save] saved ${outputPath} (${buffer.length} bytes, ${mime})`)
+        logger.info(`[cover:save-temp-image] saved ${outputPath} (${buffer.length} bytes, ${mime})`)
       } catch (e) {
-        logger.error(`[cover:save] write failed: ${e.message}`)
+        logger.error(`[cover:save-temp-image] write failed: ${e.message}`)
         return { success: false, error: e.message }
       }
 

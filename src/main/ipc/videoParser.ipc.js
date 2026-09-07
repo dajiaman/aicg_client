@@ -7,9 +7,12 @@
 // 后续将对接：
 //   - python-modules/videoParserModule（yt-dlp / 平台特定解析 + ASR）
 //   - python-modules/asrModule（fast-whisper-server）
+import path from 'path'
+import fs from 'fs'
 import logger from '../log'
 import { parseDouyinVideoInfo, parseAndExtractDouyin } from '../videoParser/douyin.js'
 import { parseKuaishouVideoInfo, parseAndExtractKuaishou } from '../videoParser/kuaishou.js'
+import { getAppRootPath } from './file.ipc.js'
 
 /**
  * 平台识别规则（与 mock validateUrl 保持一致）

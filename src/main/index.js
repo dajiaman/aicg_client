@@ -94,60 +94,60 @@ function createWindow() {
   }
 }
 
-function createWindow2() {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 960,
-    minWidth: 1280,
-    minHeight: 960,
-    show: false,
-    autoHideMenuBar: true,
-    backgroundColor: '#0d0d18',
-    frame: false,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: path.join(__dirname, '../preload/index.js'),
-      sandbox: false,
-      webSecurity: false
-    }
-  })
+// function createWindow2() {
+//   // Create the browser window.
+//   const mainWindow = new BrowserWindow({
+//     width: 1280,
+//     height: 960,
+//     minWidth: 1280,
+//     minHeight: 960,
+//     show: false,
+//     autoHideMenuBar: true,
+//     backgroundColor: '#0d0d18',
+//     frame: false,
+//     ...(process.platform === 'linux' ? { icon } : {}),
+//     webPreferences: {
+//       nodeIntegration: false,
+//       contextIsolation: true,
+//       preload: path.join(__dirname, '../preload/index.js'),
+//       sandbox: false,
+//       webSecurity: false
+//     }
+//   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-    if (is.dev) {
-      mainWindow.webContents.openDevTools({
-        mode: 'detach'
-      })
-    }
-  })
+//   mainWindow.on('ready-to-show', () => {
+//     mainWindow.show()
+//     if (is.dev) {
+//       mainWindow.webContents.openDevTools({
+//         mode: 'detach'
+//       })
+//     }
+//   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
+//   mainWindow.webContents.setWindowOpenHandler((details) => {
+//     shell.openExternal(details.url)
+//     return { action: 'deny' }
+//   })
 
-  mainWindow.webContents.on('did-finish-load', () => {
-    logger.info('did-finish-load')
+//   mainWindow.webContents.on('did-finish-load', () => {
+//     logger.info('did-finish-load')
 
-    setTimeout(() => {
-      getMachineId().then((hashedId) => {
-        global.deviceId = hashedId
-        models.config.set('auth.deviceId', hashedId, 'auth', 'PC端设备ID')
-      })
-    })
-  })
+//     setTimeout(() => {
+//       getMachineId().then((hashedId) => {
+//         global.deviceId = hashedId
+//         models.config.set('auth.deviceId', hashedId, 'auth', 'PC端设备ID')
+//       })
+//     })
+//   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL('http://localhost:3000')
-  } else {
-    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
-  }
-}
+//   // HMR for renderer base on electron-vite cli.
+//   // Load the remote URL for development or the local html file for production.
+//   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+//     mainWindow.loadURL('http://localhost:3000')
+//   } else {
+//     mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
+//   }
+// }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -158,7 +158,7 @@ app.whenReady().then(() => {
   startChromaDb()
   registerChromaDbLifecycle()
 
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('com.gc-client')
 
   initDatabase()
   logger.info('database initialized')
@@ -175,7 +175,7 @@ app.whenReady().then(() => {
   createWindow()
 
   if (is.dev) {
-    createWindow2()
+    // createWindow2()
   }
 
   app.on('activate', function () {

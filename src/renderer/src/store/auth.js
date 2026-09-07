@@ -52,6 +52,7 @@ export const useAuthStore = defineStore('auth', {
     async login(form) {
       try {
         const res = await window.api.user.login(form.email.trim(), form.password.trim())
+        console.log('登录响应:', res)
         if (res?.success && res.data) {
           this.setUserInfo(res.data)
           this.saveToken(res.data.token)
@@ -76,6 +77,7 @@ export const useAuthStore = defineStore('auth', {
      */
     async getProfile() {
       const res = await window.api.user.getProfile()
+      console.log('获取用户信息响应:', res)
       if (res?.success && res.data) {
         this.setUserInfo({
           ...this.userInfo,

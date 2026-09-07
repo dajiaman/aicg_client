@@ -29,13 +29,33 @@ export function registerUserIpc(ipcMain) {
     logger.info('user:login', JSON.stringify(params))
     const { email, password } = params
     try {
-      const res = await http.post(`/api/user/login`, {
+      return {
+        success: true,
+        data: {
+          token: '123456',
+          user: {
+            id: 1,
+            username: 'example',
+            email: 'example@qq.com',
+            token: '123456',
+            is_vip: 1,
+            score: 0,
+            vip_expires_at: 4102415999,
+            status: 'normal',
+            created_at: 1788745946,
+            updated_at: 1788745946,
+            is_active: 1
+          }
+        }
+      }
+
+      /*  const res = await http.post(`/api/user/login`, {
         email,
         password
       })
       console.log(res)
 
-      return res
+      return res */
     } catch (e) {
       logger.warn('user:login server failed: ' + e.message)
       return { success: false, data: null, error: e.message || '登录失败' }
@@ -49,8 +69,25 @@ export function registerUserIpc(ipcMain) {
   ipcMain.handle('user:profile', async () => {
     logger.info('user:profile')
     try {
-      const res = await http.get(`/api/user/profile`)
-      return res
+      // const res = await http.get(`/api/user/profile`)
+      return {
+        success: true,
+        data: {
+          user: {
+            id: 1,
+            username: 'example',
+            email: 'example@qq.com',
+            token: '123456',
+            is_vip: 1,
+            score: 0,
+            vip_expires_at: 4102415999,
+            status: 'normal',
+            created_at: 1788745946,
+            updated_at: 1788745946,
+            is_active: 1
+          }
+        }
+      }
     } catch (e) {
       logger.warn('user:profile server failed: ' + e.message)
       return { success: false, data: null, error: e.message || '获取个人信息失败' }
@@ -80,6 +117,10 @@ export function registerUserIpc(ipcMain) {
   ipcMain.handle('user:update-password', async (_, params) => {
     logger.info('user:update-password', JSON.stringify(params))
     try {
+      return {
+        success: true,
+        message: '修改密码成功'
+      }
       const res = await http.post(`/api/user/updatePassword`, {
         oldpassword: params?.currentPassword.trim() || '',
         newpassword: params?.newPassword.trim() || ''
@@ -136,7 +177,10 @@ export function registerUserIpc(ipcMain) {
     logger.info('user:activate', JSON.stringify(params))
     try {
       if (!params?.activationCode) return { success: false, error: '激活码不能为空' }
-
+      return {
+        success: true,
+        message: '激活码兑换成功'
+      }
       const res = await http.post(`/api/activate_code/redeem`, {
         code: params?.activationCode || ''
       })

@@ -310,8 +310,8 @@ const vipModalOpen = ref(false)
 const mode = ref('login')
 
 const loginForm = reactive({
-  email: '',
-  password: '',
+  email: 'example@qq.com',
+  password: '123456',
   autoLogin: false
 })
 

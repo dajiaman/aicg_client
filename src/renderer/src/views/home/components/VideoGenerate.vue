@@ -175,6 +175,7 @@ const handleGenerate = async () => {
     },
     { referenceVideoPath }
   )
+
   if (result.success) {
     updatePipelineData({
       selectedAvatar: avatarId,

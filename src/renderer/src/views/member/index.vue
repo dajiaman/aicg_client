@@ -7,7 +7,7 @@
             <CrownOutlined class="crown-icon" />
             <span>VIP会员</span>
           </div>
-          <h1 class="banner-title">dajiaman，感谢您的支持</h1>
+          <h1 class="banner-title">{{ userInfo.username }}，感谢您的支持</h1>
           <p class="banner-desc">尊享全部功能，无限畅用</p>
           <div class="member-info">
             <div class="info-card">
@@ -237,6 +237,7 @@ import { computed, ref } from 'vue'
 import { message } from 'ant-design-vue'
 
 const authStore = useAuthStore()
+const userInfo = computed(() => authStore.userInfo)
 const vip_expires_at = computed(() => authStore.vip_expires_at || '')
 const expiresText = computed(() => dayjs(Number(vip_expires_at.value * 1000)).format('YYYY年MM月DD日'))
 const upgradeModalOpen = ref(false)

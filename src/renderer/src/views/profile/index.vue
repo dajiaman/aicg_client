@@ -372,6 +372,7 @@ function onBack() {
 onMounted(async () => {
   try {
     const profileRes = await authStore.getProfile()
+    console.log('获取用户信息响应:', profileRes)
     if (profileRes.success) {
       basicForm.email = profileRes.data.email || ''
       basicForm.username = profileRes.data.username || ''

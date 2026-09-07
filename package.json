@@ -1,6 +1,6 @@
 {
   "name": "aigc-client",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "轻语IP智能体-口播视频量产神器",
   "main": "./out/main/index.js",
   "author": "example.com",

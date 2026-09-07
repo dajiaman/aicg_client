@@ -8,3 +8,4 @@ export function resolveExecutablePath() {
   const chromeRelativePath = join('chromium-1200', 'chrome-win64', 'chrome.exe')
   return join(getAppRootPath(), 'resources', 'playwright', chromeRelativePath)
 }
+

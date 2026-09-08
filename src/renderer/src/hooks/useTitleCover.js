@@ -556,7 +556,6 @@ ${content}
       // 保存导出路径对话框
       const saveResult = await window.api.file.saveDialog({
         title: '导出封面视频',
-        defaultPath: baseName + '.' + ext,
         filters: [
           { name: '视频文件', extensions: ['mp4', 'mov', 'avi', 'mkv', 'flv', 'webm'] },
           { name: '所有文件', extensions: ['*'] }

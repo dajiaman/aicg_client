@@ -386,10 +386,11 @@ onBeforeUnmount(() => {
  * 打开文件所在文件夹
  */
 const openFileInFolder = async (path) => {
+  console.log('打开文件所在文件夹:', path)
   try {
     const result = await window.api.file.showInFolder(path)
     if (result.success) {
-      // message.success('已打开文件所在文件夹')
+      message.success('已打开文件所在文件夹')
     } else {
       message.error(result.error || '打开文件夹失败')
     }

@@ -457,6 +457,9 @@ const openFileInFolder = async (path) => {
   }
 }
 
+/**
+ * 导出视频
+ */
 const exportVideo = async (path) => {
   if (!path) return
   try {
@@ -964,12 +967,12 @@ onBeforeUnmount(() => {
             <h3>视频预览</h3>
           </div>
           <div class="result-actions">
-            <a-button size="small" type="primary" class="pill-btn">
+            <a-button size="small" type="primary" class="pill-btn" @click.stop="openFileInFolder(generatedVideo)">
               <folder-open-filled />
               打开
             </a-button>
 
-            <a-button size="small" class="ghost-btn">
+            <a-button size="small" class="ghost-btn" @click.stop="exportVideo(generatedVideo)">
               <export-outlined />
               导出
             </a-button>

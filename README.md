@@ -1,135 +1,156 @@
 # AIGC Client
 
-> 一站式 AIGC 内容生产桌面客户端 —— 集成文案改写、标题封面生成、数字人口播、语音克隆、视频剪辑、多平台一键发布。
+> 一站式 AIGC（AI 生成内容）桌面生产客户端 —— 从文案、语音、数字人到剪辑发布，让短视频生产全流程跑在本地。
 
-## 功能特性
+![应用首页](screenshots/home.png)
 
-- ✍️ **文案改写** — AI 改写口语化脚本，降低违规风险
-- 🎯 **标题 / 封面生成** — AI 自动生成发布标题、描述、标签、封面文案
-- ⚖️ **内容审核** — 自动检测违规词，支持一键替换
-- 🎤 **语音克隆** — 上传样本音频，训练专属声音模型
-- 🧑 **数字人口播** — 数字人视频 + AI 配音生成口播视频
-- 🎬 **视频剪辑工作台** — 字幕 / 背景音乐 / 画中画 / 模块化模板
-- 🚀 **多平台一键发布** — 抖音 / 快手 / 小红书 / 微信视频号
-- 💾 **数据备份与恢复** — 一键备份 SQLite 数据库
+---
 
-## 技术栈
+## 目录
 
-| 层 | 技术 |
-|----|------|
-| 桌面框架 | Electron 32+ |
-| 前端框架 | Vue 3 + Pinia + Vue Router |
-| UI 组件 | Ant Design Vue 4 |
-| 构建工具 | electron-vite + Vite 7 |
-| 样式 | Sass + Tailwind CSS |
-| 数据库 | SQLite (better-sqlite3) |
-| AI / LLM | OpenAI SDK |
-| 视频处理 | ffmpeg + sharp + fontkit |
+- [AIGC Client](#aigc-client)
+  - [目录](#目录)
+  - [核心功能](#核心功能)
+  - [快速上手](#快速上手)
+    - [1. 环境要求](#1-环境要求)
+    - [2. 安装与启动](#2-安装与启动)
+    - [3. 打包构建](#3-打包构建)
+  - [功能详解](#功能详解)
+    - [1. AI 文案工作流](#1-ai-文案工作流)
+    - [2. 数字人口播](#2-数字人口播)
+    - [3. 视频剪辑工作台](#3-视频剪辑工作台)
+    - [4. 多平台一键发布](#4-多平台一键发布)
+  - [界面预览](#界面预览)
+  - [常见问题](#常见问题)
+  - [开发者参考](#开发者参考)
+  - [许可证](#许可证)
+  - [反馈](#反馈)
 
-## 环境要求
+---
 
-- Node.js **>= 20.x**
-- pnpm **>= 8.x** 或 npm **>= 10.x**
-- Windows 10+ / macOS 12+ / Ubuntu 22.04+
-- 已内置 ffmpeg 二进制 (`resources/ffmpeg/`),无需额外安装
+## 核心功能
 
-## 快速开始
+- ✍️ **AI 文案改写** — 一键改写口语化脚本，降低平台违规风险
+- 🎯 **标题 / 封面生成** — 自动产出发布标题、描述、话题标签与封面文案
+- ⚖️ **智能内容审核** — 自动检测违规词，支持一键替换与二次润色
+- 🎤 **语音克隆** — 上传 3–10 分钟样本音频，训练专属 TTS 声音模型
+- 🧑 **数字人口播** — 数字人形象 + AI 配音，批量生成口播视频
+- 🎬 **视频剪辑工作台** — 字幕、背景音乐、画中画、模块化模板一站式完成
+- 🚀 **多平台一键发布** — 抖音 / 快手 / 小红书 / 微信视频号自动化发布
+- 💾 **数据备份与恢复** — 一键备份本地数据库与素材索引
 
-### 安装依赖
+---
 
-```bash
-pnpm install
-# 或
-npm install
-```
+## 快速上手
 
-### 开发模式
+### 1. 环境要求
 
-```bash
-pnpm dev
-# 或
-npm run dev
-```
-
-启动后会自动打开 Electron 窗口,主进程 + 渲染进程均支持热更新。
-
-### 打包构建
-
-```bash
-# Windows (生成 .exe 安装包)
-pnpm build:win
-
-# macOS (生成 .dmg)
-pnpm build:mac
-
-# Linux (生成 .AppImage / .deb)
-pnpm build:linux
-
-# 仅打包不安装(快速验证)
-pnpm justpack
-```
-
-构建产物位于 `release/` 或 `dist/` 目录。
-
-## 项目结构
-
-```
-aigc-client/
-├── src/
-│   ├── main/                    # Electron 主进程
-│   │   ├── ipc/                 # IPC 通道（*.ipc.js）
-│   │   ├── services/            # 业务服务层
-│   │   ├── database/            # SQLite 封装 + models
-│   │   ├── publish/             # 多平台发布实现
-│   │   ├── login/               # 各平台登录
-│   │   ├── utils/               # 工具函数
-│   │   └── index.js             # 主进程入口
-│   ├── preload/                 # preload 脚本（暴露 window.api）
-│   └── renderer/                # Vue 渲染进程
-│       ├── src/
-│       │   ├── views/           # 页面（home / voice / avatar / ...）
-│       │   ├── components/      # 公共组件
-│       │   ├── store/           # Pinia store
-│       │   ├── hooks/           # 组合式函数
-│       │   └── router/          # 路由
-├── resources/
-│   ├── ffmpeg/                  # 内置 ffmpeg / ffprobe
-│   ├── fonts/                   # 字体资源
-│   └── build/                   # 打包配置 + 图标
-├── build/                       # electron-builder 配置
-├── electron.vite.config.ts      # electron-vite 配置
-└── package.json
-```
-
-## 数据存储
-
-- **数据库**:`<userData>/aigc_client.db`
-  - accounts / voices / avatars / materials / tasks / config 等表
-  - 备份：`设置 → 数据管理 → 备份数据`（生成 VACUUM INTO 一致性快照）
-- **输出目录**:可在 `设置 → 通用 → 输出路径` 自定义
-- **临时文件**: `<appRoot>/temp/`（封面抽帧 / 视频裁剪 / 字体副本）
-- **缓存清理**: `设置 → 数据管理 → 清除缓存`
-
-## 常用脚本
-
-| 命令 | 说明 |
+| 项目 | 要求 |
 |------|------|
-| `pnpm dev` | 开发模式 |
-| `pnpm build` | 构建主进程 + 渲染进程 |
-| `pnpm build:win` | 打包 Windows 安装包 |
-| `pnpm build:mac` | 打包 macOS DMG |
-| `pnpm build:linux` | 打包 Linux 安装包 |
-| `pnpm justpack` | 仅打包不安装（快速验证） |
-| `pnpm lint` | ESLint 检查 |
-| `pnpm format` | Prettier 格式化 |
+| 操作系统 | Windows 10+ / macOS 12+ / Ubuntu 22.04+ |
+| Node.js | ≥ 20.x |
+| 包管理器 | pnpm ≥ 8.x（推荐）或 npm ≥ 10.x |
+| 其他 | 已内置 ffmpeg（`resources/ffmpeg/`），无需额外安装 |
 
-## 开发约定
+### 2. 安装与启动
 
-- **IPC 通信**:统一在 `src/main/ipc/` 注册,格式 `ipcMain.handle('module:action', ...)`
-- **数据库表**:在 `src/main/database/index.js` 的 `createTables()` 中定义
-- **平台账号**:`src/main/database/services.js` 的 `models.platform_accounts`
-- **错误处理**:主进程所有 IPC 返回 `{ success, data?, error? }`
-- **日志**:`electron-log` 自动写入 `<userData>/logs/`
+```bash
+# 克隆项目
+git clone https://github.com/dajiaman/aicg_client.git
+cd aigc-client
+
+# 安装依赖（会自动执行 electron-builder install-app-deps）
+pnpm install
+
+# 启动开发模式
+pnpm dev
+```
+
+启动后会自动打开 Electron 窗口，主进程与渲染进程均支持热更新。
+
+### 3. 打包构建
+
+```bash
+pnpm build:win      # Windows 安装包（NSIS）
+```
+
+构建产物位于 `dist/` 目录。
+
+---
+
+## 功能详解
+
+### 1. AI 文案工作流
+
+打开「文案工作台」→ 粘贴原文 → 选择改写风格（口语 / 专业 / 故事化）→ 一键生成多版本候选，支持人工再编辑。
+
+### 2. 数字人口播
+
+1. 在「数字人」页上传参考形象视频（≥ 10 秒）
+2. 选择训练好的声音模型或上传新样本
+3. 输入文案 → 实时预览 → 导出 MP4
+
+### 3. 视频剪辑工作台
+
+集成字幕识别（ASR）、背景音乐、画中画、模板化镜头，支持时间轴拖拽与多轨道编辑。
+
+### 4. 多平台一键发布
+
+通过 Playwright 自动化登录各平台，按账号管理发布任务，支持定时发布与发布结果回调。
+
+> ⚠️ 发布功能依赖平台账号，请先在「账号管理」页完成对应平台授权登录。
+
+---
+
+## 界面预览
+
+| 模块 | 预览 |
+|------|------|
+| 截图 1 | ![](screenshots/Snipaste_2026-09-08_12-31-05.png) |
+| 截图 2 | ![](screenshots/Snipaste_2026-09-08_12-31-44.png) |
+| 截图 3 | ![](screenshots/Snipaste_2026-09-08_12-31-52.png) |
+| 截图 4 | ![](screenshots/Snipaste_2026-09-08_12-31-57.png) |
+| 首页 | ![](screenshots/home.png) |
+
+---
+
+
+## 常见问题
+
+<details>
+<summary><b>Q：首次启动提示缺少 Python / ASR 模块？</b></summary>
+
+`python-modules/` 目录默认随安装包分发。若提示找不到，请确认安装目录是否完整，或从发行包重新安装。
+</details>
+
+<details>
+<summary><b>Q：数字人 / 语音克隆训练失败？</b></summary>
+
+- 检查样本音频格式（推荐 WAV / 16kHz / 单声道）
+- 样本时长建议 3–10 分钟，避免过短或过长
+- GPU 驱动需与 PyTorch 版本匹配（详见 `python-modules/*/README.md`）
+</details>
+
+<details>
+<summary><b>Q：抖音 / 快手发布失败？</b></summary>
+
+- 平台风控策略变化较快，请升级到最新版本
+- 首次发布需在「账号管理」完成浏览器登录态绑定
+- 同一账号短时间内频繁发布可能触发风控，建议间隔 ≥ 30 分钟
+</details>
+
+<details>
+<summary><b>Q：如何迁移数据到新电脑？</b></summary>
+
+在旧电脑 `设置 → 数据管理 → 备份数据` 生成快照文件 → 拷贝至新电脑 → `设置 → 数据管理 → 恢复数据`。注意输出目录的视频素材需另行拷贝。
+</details>
+
+---
+
+## 开发者参考
+
+> 这一节面向二次开发者，普通用户可跳过。
+
 
 ## 许可证
 
@@ -137,4 +158,5 @@ aigc-client/
 
 ## 反馈
 
-提交 Issue 或 PR: <https://github.com/dajiaman/aicg_client>
+- Issue / PR：<https://github.com/dajiaman/aicg_client>
+- 讨论与建议：欢迎在 Issue 区发起讨论

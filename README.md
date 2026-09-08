@@ -51,6 +51,7 @@
 | Node.js | ≥ 20.x |
 | 包管理器 | pnpm ≥ 8.x（推荐）或 npm ≥ 10.x |
 | 其他 | 已内置 ffmpeg（`resources/ffmpeg/`），无需额外安装 |
+| Python AI 模块 | `python-modules/`（asr / voice / human）需单独下载：[飞书云盘](https://m0s2t24ga28.feishu.cn/wiki/NOyFwZZoQiBzo9kWV2NcD7rInOc) |
 
 ### 2. 安装与启动
 
@@ -58,6 +59,9 @@
 # 克隆项目
 git clone https://github.com/dajiaman/aicg_client.git
 cd aigc-client
+
+# 下载 python-modules/ 并解压到项目根目录
+# 下载地址：https://m0s2t24ga28.feishu.cn/wiki/NOyFwZZoQiBzo9kWV2NcD7rInOc
 
 # 安装依赖（会自动执行 electron-builder install-app-deps）
 pnpm install
